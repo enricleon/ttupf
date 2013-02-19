@@ -11,7 +11,7 @@ var express = require('express')
   , http = require('http')
   , path = require('path');
 
-mongoose.connect('localhost', 'test');
+mongoose.connect('localhost', 'ttupf');
 
 var app = express();
 

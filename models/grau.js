@@ -9,7 +9,7 @@ var mongoose = require('mongoose');
 
 var grauSchema = mongoose.Schema({
     nom:        {type: String, required: true},
-    web_estudi: {type: String, required: true}
+    web_estudi: {type: String}
 });
 
 var Grau = mongoose.model('Grau', grauSchema);
