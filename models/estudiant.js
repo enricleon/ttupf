@@ -8,10 +8,10 @@
 var mongoose = require('mongoose');
 
 var estudiantSchema = mongoose.Schema({
-    nom: 'string',
-    nia: 'string',
-    password: 'string',
-    email: 'string'
+    nom:        {type: String},
+    nia:        {type: String},
+    password:   {type: String},
+    email:      {type: String}
 });
 
 var Estudiant = mongoose.model('Estudiant', estudiantSchema);

@@ -8,8 +8,8 @@
 var mongoose = require('mongoose');
 
 var assignaturaSchema = mongoose.Schema({
-    nom:    'string',
-    curs:   { type: mongoose.Schema.ObjectId, ref: 'Curs'}
+    nom:    {type: String, required: true},
+    curs:   {type: mongoose.Schema.ObjectId, ref: 'Curs', required: true}
 });
 
 var Assignatura = mongoose.model('Assignatura', assignaturaSchema);

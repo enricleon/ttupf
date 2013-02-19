@@ -8,8 +8,8 @@
 var mongoose = require('mongoose');
 
 var periodeSchema = mongoose.Schema({
-    trimestre: 'string',
-    any: 'string'
+    trimestre:  {type: Number, required: true},
+    any:        {type: Date, required: true}
 });
 
 var Periode = mongoose.model('Periode', periodeSchema);

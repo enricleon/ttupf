@@ -8,8 +8,8 @@
 var mongoose = require('mongoose');
 
 var periodeTeAssignaturesSchema = mongoose.Schema({
-    periode:        { type: mongoose.Schema.ObjectId, ref: 'Periode'},
-    assignatura:    { type: mongoose.Schema.ObjectId, ref: 'Assignatura'}
+    periode:        {type: mongoose.Schema.ObjectId, ref: 'Periode', required: true},
+    assignatura:    {type: mongoose.Schema.ObjectId, ref: 'Assignatura', required: true}
 });
 
 var PeriodeTeAssignatures = mongoose.model('PeriodeTeAssignatures', periodeTeAssignaturesSchema);

@@ -8,12 +8,12 @@
 var mongoose = require('mongoose');
 
 var sessioSchema = mongoose.Schema({
-    tipus: 'string',
-    grup: 'string',
-    aula: 'string',
-    comentari: 'string',
-    periode:        { type: mongoose.Schema.ObjectId, ref: 'Periode'},
-    assignatura:    { type: mongoose.Schema.ObjectId, ref: 'Assignatura'}
+    tipus:          {type: String},
+    grup:           {type: String},
+    aula:           {type: String},
+    comentari:      {type: String},
+    periode:        {type: mongoose.Schema.ObjectId, ref: 'Periode', required: true},
+    assignatura:    {type: mongoose.Schema.ObjectId, ref: 'Assignatura', required: true}
 });
 
 var Sessio = mongoose.model('Sessio', sessioSchema);

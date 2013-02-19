@@ -8,7 +8,7 @@
 var mongoose = require('mongoose');
 
 var cursSchema = mongoose.Schema({
-    nom: 'string'
+    nom:    {type: String, required: true}
 });
 
 var Curs = mongoose.model('Curs', cursSchema);

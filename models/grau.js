@@ -8,8 +8,8 @@
 var mongoose = require('mongoose');
 
 var grauSchema = mongoose.Schema({
-    nom: 'string',
-    web_estudi: 'string'
+    nom:        {type: String, required: true},
+    web_estudi: {type: String, required: true}
 });
 
 var Grau = mongoose.model('Grau', grauSchema);

@@ -8,11 +8,11 @@
 var mongoose = require('mongoose');
 
 var estudiantTeAssignaturesSchema = mongoose.Schema({
-    grup_teoria:        'string',
-    grup_practiques:    'string',
-    grup_seminari:      'string',
-    estudiant:          { type: mongoose.Schema.ObjectId, ref: 'Estudiant'},
-    assignatura:        { type: mongoose.Schema.ObjectId, ref: 'Assignatura'}
+    grup_teoria:        {type: String},
+    grup_practiques:    {type: String},
+    grup_seminari:      {type: String},
+    estudiant:          {type: mongoose.Schema.ObjectId, ref: 'Estudiant', required: true},
+    assignatura:        {type: mongoose.Schema.ObjectId, ref: 'Assignatura', required: true}
 });
 
 var EstudiantTeAssignatures = mongoose.model('EstudiantTeAssignatures', estudiantTeAssignaturesSchema);

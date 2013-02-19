@@ -8,10 +8,10 @@
 var mongoose = require('mongoose');
 
 var carreraCursSchema = mongoose.Schema({
-    url_horari: 'string',
-    grau:       { type: mongoose.Schema.ObjectId, ref: 'Grau'},
-    curs:       { type: mongoose.Schema.ObjectId, ref: 'Curs'},
-    periode:    { type: mongoose.Schema.ObjectId, ref: 'Periode'}
+    url_horari: {type: String, required: true},
+    grau:       {type: mongoose.Schema.ObjectId, ref: 'Grau', required: true},
+    curs:       {type: mongoose.Schema.ObjectId, ref: 'Curs', required: true},
+    periode:    {type: mongoose.Schema.ObjectId, ref: 'Periode', required: true}
 });
 
 var CarreraCurs = mongoose.model('CarreraCurs', carreraCursSchema);
