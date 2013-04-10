@@ -5,27 +5,44 @@
  * Time: 10:26
  * To change this template use File | Settings | File Templates.
  */
-var mongoose = require('mongoose');
-var timetableApi = require('../providers/timetableApi');
+var mongoose = require('mongoose')
+    , xpath = require('xpath')
+    , querystring = require('querystring')
+    , http = require('http')
+    , timetableApi = require('../providers/timetableApi');
 
 var carreraCursSchema = mongoose.Schema({
     url_horari: {type: String, required: true},
+    grup_teoria: {type: String, required: true},
     grau:       {type: mongoose.Schema.ObjectId, ref: 'Grau', required: true},
     curs:       {type: mongoose.Schema.ObjectId, ref: 'Curs', required: true},
     periode:    {type: mongoose.Schema.ObjectId, ref: 'Periode', required: true}
 });
 
-carreraCursSchema.methods.getAssignatures = function(body){
-    if(body == undefined) {
-        timetableApi.getHtmlFrom(this.url_horari, this.getAssignatures);
-    }
-    else {
-        console.log(body);
-        //html/body/descendant::table son les semanes
-        //html/body/descendant::table/tr son les files de la taula. La 1 son els dies de la setmana la 2 son els dies
-        //html/body/descendant::table/tr/td/descendant::strong Son els dies. EL primer es string "HORA" els altres son format Date
-        //Amb aquest parse a cada fila de la taula de la 3 a la 5 treiem la hora en format 12:30-14:30
-        //A cada fila de la columna podem treure la casella amb html/body/descendant::table/tr/td/div on el td te una id del pal cela_1
+carreraCursSchema.methods.actualitza = function(body){
+    if (body != undefined) {
+        var data = querystring.stringify({
+            'tablength': 4,
+            'linelength': 100,
+            'output-charset': 'UTF-8',
+            'input-charset': 'UTF-8'
+        });
+
+        var request = require('request');
+        var self = this;
+        request.post({
+            headers: {
+                "Content-type": "text/html",
+                "Accept": "application/xhtml+xml"
+            },
+            url:    'http://www.it.uc3m.es/jaf/cgi-bin/html2xhtml.cgi?' + data,
+            body:   body
+        }, function(error, response, body){
+            console.log(response.toString());
+            timetableApi.parseCarreraCurs(body, self);
+        });
+    } else {
+        timetableApi.getHtmlFrom(this.url_horari, this.actualitza);
     }
 };
 

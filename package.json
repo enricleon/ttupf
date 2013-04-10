@@ -11,6 +11,9 @@
     "stylus": "*",
 	"mongodb": "*",
 	"mongoose": "*",
-    "request": "*"
+    "request": "*",
+    "xpath": "*",
+    "xmldom": "*",
+    "jsdom": "*"
   }
 }

@@ -19,7 +19,8 @@ var Periode = require('../models/periode');
 exports.test = function(req, res){
 
     var gei_c1_t2_g1 = new CarreraCurs({
-        url_horari: "http://www.upf.edu/esup/docencia/horaris1213/graus12_13/horaris_1213_GEI_C1_T2_G1.html"
+        url_horari: "http://www.upf.edu/esup/docencia/horaris1213/graus12_13/horaris_1213_GET_C2_T2_G1.html",
+        grup_teoria: "1"
     });
 
     gei_c1_t2_g1.save(function (err) {
