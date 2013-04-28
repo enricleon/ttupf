@@ -12,7 +12,7 @@ var Grau = require('../models/grau');
 var Periode = require('../models/periode');
 
 exports.actualitza = function(req, res) {
-    res.render('index', { title: 'Actualitzant...' });
+    res.render('simpleMessage', { title: 'Acctualització de la llista de sessions', message: "La llista de sessions s'està actualitzant..." });
 
     CarreraCurs.find({}).populate('curs grau periode').exec(function (err, carreraCursos){
         // here you are iterating through the users

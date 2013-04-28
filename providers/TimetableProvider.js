@@ -53,11 +53,11 @@ var parseDay = function(item, index) {
     var hora = hores[Math.floor(index/dies.length)].toString();
     var dia = dies[index % dies.length].toString();
 
-    var hora = sessionsProvider.getHoresInici(hora);
+    var hora = sessionsProvider.GetHoresInici(hora);
     var data = date.parse(dia + " " + hora);
 
     var currentBlock = new Block(item, data);
 
-    sessionsProvider.parseSessio(currentBlock);
+    sessionsProvider.ParseBlock(currentBlock);
 }
 

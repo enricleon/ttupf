@@ -112,7 +112,7 @@ SessionsProvider.prototype.FillAssignatura = function(currentBlock) {
     }
     else {
         var curs = this.carreraCurs.curs;
-        currentBlock.getSessions().forEach(function(sessio) {
+        currentBlock.GetSessions().forEach(function(sessio) {
             var upsertData = sessio.toObject();
 
             // Delete the _id property, otherwise Mongo will return a "Mod on _id not allowed" error
