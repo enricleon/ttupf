@@ -5,47 +5,33 @@
  * Time: 10:26
  * To change this template use File | Settings | File Templates.
  */
-var mongoose = require('mongoose')
-    , xpath = require('xpath')
-    , querystring = require('querystring')
-    , http = require('http')
-    , timetableApi = require('../providers/timetableApi');
+var mongoose = require('mongoose'),
+    xpath = require('xpath'),
+    querystring = require('querystring'),
+    http = require('http'),
+    timetableApi = require('../providers/TimetableProvider'),
+    tidy = require('htmltidy').tidy;
 
-var carreraCursSchema = mongoose.Schema({
-    url_horari: {type: String, required: true},
-    grup_teoria: {type: String, required: true},
-    grau:       {type: mongoose.Schema.ObjectId, ref: 'Grau', required: true},
-    curs:       {type: mongoose.Schema.ObjectId, ref: 'Curs', required: true},
-    periode:    {type: mongoose.Schema.ObjectId, ref: 'Periode', required: true}
+var Schema = mongoose.Schema, ObjectId = Schema.ObjectId;
+
+var CarreraCurs = new Schema({
+    url_horari:     {type: String, required: true, unique: true, index: true},
+    grup_teoria:    {type: String, required: true},
+    grau:           {type: ObjectId, ref: 'Grau', required: true},
+    curs:           {type: ObjectId, ref: 'Curs', required: true},
+    periode:        {type: ObjectId, ref: 'Periode', required: true}
 });
 
-carreraCursSchema.methods.actualitza = function(body){
+CarreraCurs.methods.actualitza = function(body){
     if (body != undefined) {
-        var data = querystring.stringify({
-            'tablength': 4,
-            'linelength': 100,
-            'output-charset': 'UTF-8',
-            'input-charset': 'UTF-8'
-        });
-
-        var request = require('request');
-        var self = this;
-        request.post({
-            headers: {
-                "Content-type": "text/html",
-                "Accept": "application/xhtml+xml"
-            },
-            url:    'http://www.it.uc3m.es/jaf/cgi-bin/html2xhtml.cgi?' + data,
-            body:   body
-        }, function(error, response, body){
-            console.log(response.toString());
-            timetableApi.parseCarreraCurs(body, self);
+        tidy(body, function(err, html) {
+            timetableApi.parseCarreraCurs(html);
         });
     } else {
-        timetableApi.getHtmlFrom(this.url_horari, this.actualitza);
+        timetableApi.getHtmlFrom(this);
     }
 };
 
-var CarreraCurs = mongoose.model('CarreraCurs', carreraCursSchema);
+var CarreraCurs = mongoose.model('CarreraCurs', CarreraCurs);
 
 module.exports = CarreraCurs;

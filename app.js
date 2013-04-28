@@ -3,13 +3,11 @@
  * Module dependencies.
  */
 
-var express = require('express')
-  , mongoose = require('mongoose')
-  , routes = require('./routes')
-  , user = require('./routes/user')
-  , horari = require('./routes/horari')
-  , http = require('http')
-  , path = require('path');
+var express = require('express'),
+  mongoose = require('mongoose'),
+  http = require('http'),
+  path = require('path'),
+  horari = require('./routes/horari');
 
 mongoose.connect('localhost', 'ttupf');
 
@@ -32,9 +30,8 @@ app.configure('development', function(){
   app.use(express.errorHandler());
 });
 
-app.get('/', routes.index);
-app.get('/users', user.list);
-app.get('/horari', horari.test);
+app.get('/horari', horari.init);
+app.get('/horari/actualitza', horari.actualitza);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));

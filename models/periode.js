@@ -7,11 +7,15 @@
  */
 var mongoose = require('mongoose');
 
-var periodeSchema = mongoose.Schema({
+var Schema = mongoose.Schema, ObjectId = Schema.ObjectId;
+
+var Periode = new Schema({
     trimestre:  {type: Number, required: true},
     any:        {type: Date, required: true}
 });
 
-var Periode = mongoose.model('Periode', periodeSchema);
+Periode.index({ trimestre: 1, any: 1 }, { unique: true });
+
+var Periode = mongoose.model('Periode', Periode);
 
 module.exports = Periode;

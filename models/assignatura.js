@@ -7,11 +7,14 @@
  */
 var mongoose = require('mongoose');
 
-var assignaturaSchema = mongoose.Schema({
-    nom:    {type: String, required: true},
-    curs:   {type: mongoose.Schema.ObjectId, ref: 'Curs', required: true}
+var Schema = mongoose.Schema, ObjectId = Schema.ObjectId;
+
+var Assignatura = new Schema({
+    nom:        {type: String, required: true, unique: true, index: true},
+    curs:       {type: ObjectId, ref: 'Curs', required: true},
+    sessions:   {type: [ObjectId], ref: 'Sessio'}
 });
 
-var Assignatura = mongoose.model('Assignatura', assignaturaSchema);
+var Assignatura = mongoose.model('Assignatura', Assignatura);
 
 module.exports = Assignatura;

@@ -7,15 +7,18 @@
  */
 var mongoose = require('mongoose');
 
-var sessioSchema = mongoose.Schema({
+var Schema = mongoose.Schema, ObjectId = Schema.ObjectId;
+
+var Sessio = new Schema({
     tipus:          {type: String},
     grup:           {type: String},
     aula:           {type: String},
-    comentari:      {type: String},
-    periode:        {type: mongoose.Schema.ObjectId, ref: 'Periode', required: true},
-    assignatura:    {type: mongoose.Schema.ObjectId, ref: 'Assignatura', required: true}
+    data:           {type: Date, required: true},
+    comentari:      {type: String}
 });
 
-var Sessio = mongoose.model('Sessio', sessioSchema);
+Sessio.index({ aula: 1, data: 1 }, { unique: true });
+
+var Sessio = mongoose.model('Sessio', Sessio);
 
 module.exports = Sessio;

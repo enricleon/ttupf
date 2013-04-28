@@ -7,10 +7,13 @@
  */
 var mongoose = require('mongoose');
 
-var cursSchema = mongoose.Schema({
-    nom:    {type: String, required: true}
+var Schema = mongoose.Schema, ObjectId = Schema.ObjectId;
+
+var Curs = new Schema({
+    nom:    {type: String, required: true, unique: true},
+    numero: {type: String, required: true, unique: true, index: true}
 });
 
-var Curs = mongoose.model('Curs', cursSchema);
+var Curs = mongoose.model('Curs', Curs);
 
 module.exports = Curs;

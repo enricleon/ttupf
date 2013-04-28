@@ -7,11 +7,14 @@
  */
 var mongoose = require('mongoose');
 
-var grauSchema = mongoose.Schema({
+var Schema = mongoose.Schema, ObjectId = Schema.ObjectId;
+
+var Grau = new Schema({
     nom:        {type: String, required: true},
+    codi:       {type: String, required: true, unique: true},
     web_estudi: {type: String}
 });
 
-var Grau = mongoose.model('Grau', grauSchema);
+var Grau = mongoose.model('Grau', Grau);
 
 module.exports = Grau;
