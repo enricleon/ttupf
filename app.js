@@ -4,10 +4,11 @@
  */
 
 var express = require('express'),
-  mongoose = require('mongoose'),
-  http = require('http'),
-  path = require('path'),
-  horari = require('./routes/horari');
+    mongoose = require('mongoose'),
+    http = require('http'),
+    path = require('path'),
+    horari = require('./routes/horari'),
+    tests = require('./routes/test');
 
 mongoose.connect('localhost', 'ttupf');
 
@@ -32,6 +33,8 @@ app.configure('development', function(){
 
 app.get('/horari', horari.init);
 app.get('/horari/actualitza', horari.actualitza);
+
+app.get('/test/parsertest', tests.parsertest);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));

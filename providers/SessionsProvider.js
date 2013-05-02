@@ -102,10 +102,10 @@ SessionsProvider.prototype.FillType = function(currentBlock) {
 
 SessionsProvider.prototype.FillAssignatura = function(currentBlock) {
     //Tenim el nom de l'assignatura
-    var nom = this.lastLine;
-    var self = this;
+    var assignatura = this.lastLine;
 
     currentBlock.SetPropertyToAll("data", currentBlock.data.toUTCString());
+    currentBlock.SetPropertyToAll("assignatura", assignatura);
 
     if(currentBlock.Finish) {
         currentBlock.Finish(null, currentBlock);
