@@ -6,7 +6,26 @@
  * To change this template use File | Settings | File Templates.
  */
 
-exports.actualitza = function () {
+var Grau = require('../models/Grau');
+var Assignatura = require('./models/Assignatura');
+exports.actualitza = function (req, res) {
     // Per cada assignatura a la base de dades
     // assignatura.actualitza();
+    //per cada grau, aga
+    res.render('simpleMessage', { title: 'Actualització de la llista de asignatures', message: "La llista de assignatures s'està actualitzant..." });
+
+    Grau.find({}).populate('assignatures').exec(function (err, graus){
+        // here you are iterating through the users
+        // but you don't know when it will finish
+        if(err){
+            console.log(err);
+        } else{
+            graus.forEach(function(grau){
+                var codi = grau.codi;
+                grau.assignatures.forEach(function (assignatura){
+                    console.log(assignatura);
+                });
+            });
+        }
+    });
 }
