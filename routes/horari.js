@@ -6,10 +6,10 @@
  * To change this template use File | Settings | File Templates.
  */
 
-var CarreraCurs = require('../models/carreraCurs');
-var Curs = require('../models/curs');
-var Grau = require('../models/grau');
-var Periode = require('../models/periode');
+var CarreraCurs = require('../models/CarreraCurs');
+var Curs = require('../models/Curs');
+var Grau = require('../models/Grau');
+var Periode = require('../models/Periode');
 
 exports.actualitza = function(req, res) {
     res.render('simpleMessage', { title: 'Acctualització de la llista de sessions', message: "La llista de sessions s'està actualitzant..." });

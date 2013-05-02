@@ -11,7 +11,7 @@ var Vows = require('vows'),
 
 var Block = require('../providers/Block');
 var date = require('../providers/date');
-var CarreraCurs = require('../models/carreraCurs');
+var CarreraCurs = require('../models/CarreraCurs');
 var SessionsProvider = require('../providers/SessionsProvider');
 
 Vows.describe('Blocks').addBatch({

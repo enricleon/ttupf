@@ -11,7 +11,7 @@ var AssignaturesProvider = module.exports = function(url) {
 };
 
 AssignaturesProvider.prototype.FindAssignaturaByName = function() {
-    this.
+
 };
 
 
