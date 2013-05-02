@@ -18,4 +18,3 @@ var Grau = new Schema({
 
 var Grau = mongoose.model('Grau', Grau);
 
-module.exports = Grau;

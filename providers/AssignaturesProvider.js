@@ -9,9 +9,11 @@
 var AssignaturesProvider = module.exports = function(url) {
     this.url = url;
 };
+
 //
-AssignaturesProvider.prototype.FindAssignaturaByName = function(assignatura)
-    this.
+AssignaturesProvider.prototype.FindAssignaturaByName = function(assignatura) {
+    
+
 };
 
 

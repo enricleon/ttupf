@@ -8,6 +8,7 @@
 
 var xpath = require('xpath'),
     dom = require('xmldom').DOMParser,
+    Grau = require('../models/Grau'),
     Assignatura = require('../models/Assignatura'),
     Sessio = require('../models/Sessio');
 
@@ -111,6 +112,7 @@ SessionsProvider.prototype.FillAssignatura = function(currentBlock) {
     }
     else {
         var curs = this.carreraCurs.curs;
+        var grau = this.carreraCurs.grau;
         currentBlock.GetSessions().forEach(function(sessio) {
             var upsertData = sessio.toObject();
 
@@ -118,13 +120,15 @@ SessionsProvider.prototype.FillAssignatura = function(currentBlock) {
             delete upsertData._id;
 
             Sessio.findOneAndUpdate({aula: sessio.aula, data: sessio.data}, upsertData, { upsert: true }, function(err, doc) {
-                Assignatura.update({nom: nom},{$addToSet: {sessions: doc}, curs: curs},{ upsert: true }, function(err){
-                    if(err){
-                        console.log(err);
-                    }
-                    else {
-                        console.log("Sessio relacionada perfectament");
-                    }
+                Assignatura.findOneAndUpdate({nom: assignatura},{$addToSet: {sessions: doc}, curs: curs},{ upsert: true }, function(err, doc){
+                    Grau.findOneAndUpdate({nom: grau.nom},{$addToSet: {assignatures: doc}},{ upsert: true }, function(err, doc){
+                        if(err){
+                            console.log(err);
+                        }
+                        else {
+                            console.log("Sessio relacionada perfectament");
+                        }
+                    });
                 });
             })
         });

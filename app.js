@@ -32,12 +32,10 @@ app.configure('development', function(){
   app.use(express.errorHandler());
 });
 
-horari.
-
 app.get('/horari', horari.init);
 app.get('/horari/actualitza', horari.actualitza);
 
-app.get('assignatures/actualitza', assignatures.actualitza);
+app.get('/assignatures/actualitza', assignatures.actualitza);
 
 app.get('/test/parsertest', tests.parsertest);
 
