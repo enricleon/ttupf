@@ -7,10 +7,16 @@
  */
 
 var AssignaturesProvider = module.exports = function(url) {
-    var privateVariable = "defaultValue";
-    this.publicVariable = "defaultValue";
+    this.url = url;
 };
 
-AssignaturesProvider.prototype.PublicMethod = function(parameter) {
-
+AssignaturesProvider.prototype.FindAssignaturaByName = function() {
+    this.
 };
+
+
+
+
+
+
+

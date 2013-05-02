@@ -8,6 +8,7 @@ var express = require('express'),
     http = require('http'),
     path = require('path'),
     horari = require('./routes/horari'),
+    assignatures = require('./routes/assignatures'),
     tests = require('./routes/test');
 
 mongoose.connect('localhost', 'ttupf');
@@ -31,8 +32,12 @@ app.configure('development', function(){
   app.use(express.errorHandler());
 });
 
+horari.
+
 app.get('/horari', horari.init);
 app.get('/horari/actualitza', horari.actualitza);
+
+app.get('assignatures/actualitza', assignatures.actualitza);
 
 app.get('/test/parsertest', tests.parsertest);
 

@@ -15,6 +15,12 @@ var Assignatura = new Schema({
     sessions:   {type: [ObjectId], ref: 'Sessio'}
 });
 
+
+//TODO
+Assignatura.methods.actualitza = function() {
+
+}
+
 var Assignatura = mongoose.model('Assignatura', Assignatura);
 
 module.exports = Assignatura;
