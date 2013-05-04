@@ -12,9 +12,9 @@ var Schema = mongoose.Schema, ObjectId = Schema.ObjectId;
 var Grau = new Schema({
     nom:        {type: String, required: true},
     codi:       {type: String, required: true, unique: true},
-    assignatures: {type: [ObjectId], ref: 'Assignatura'},
-    web_programa: {type: String, required: true, unique: true}
+    assignatures: {type: [ObjectId], ref: 'Assignatura'}
 });
 
 var Grau = mongoose.model('Grau', Grau);
 
+module.exports = Grau;
