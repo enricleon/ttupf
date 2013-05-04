@@ -15,6 +15,9 @@
     "stylus": "*",
     "vows": "*",
     "xmldom": "*",
-    "xpath": "*"
+    "xpath": "*",
+    "passport": "*",
+    "passport-local": "*",
+    "passport-local-mongoose": "*"
   }
 }

@@ -106,6 +106,7 @@ SessionsProvider.prototype.FillAssignatura = function(currentBlock) {
     var assignatura = this.lastLine;
 
     currentBlock.SetPropertyToAll("data", currentBlock.data.toUTCString());
+    currentBlock.SetPropertyToAll("assignatura", assignatura);
 
     if(currentBlock.Finish) {
         currentBlock.Finish(null, currentBlock);
