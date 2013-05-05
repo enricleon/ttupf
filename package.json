@@ -12,7 +12,6 @@
 	"mongodb": "*",
 	"mongoose": "*",
     "request": "*",
-    "stylus": "*",
     "vows": "*",
     "xmldom": "*",
     "xpath": "*",
