@@ -263,8 +263,6 @@ SessionsProvider.prototype.ParseBlock = function(currentBlock) {
 
     var self = this;
 
-    var contentString = linies.toString();
-
     //Parsejem la sessió de l'última linia a la primera
     linies.reverse().forEach(function(item, index) {
 

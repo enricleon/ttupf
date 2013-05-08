@@ -1,10 +1,12 @@
 var passport = require('passport'),
     User = require('./models/User'),
     horari = require('./routes/horari'),
-    assignatures = require('./routes/assignatures');
+    user = require('./routes/user'),
+    assignatures = require('./routes/assignatures'),
+    ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn;
 
 module.exports = function (app) {
-    
+
     app.get('/', function (req, res) {
         res.render('index', { user : req.user, title: "Timetable UPF" });
     });
@@ -22,7 +24,7 @@ module.exports = function (app) {
                 if (error) {
                     throw error;
                 }
-                res.redirect('/');
+                res.redirect('/user/profile');
             });
         });
     });
@@ -31,20 +33,21 @@ module.exports = function (app) {
         res.render('login', { user : req.user, title: "Log In" });
     });
 
-    app.post('/login', passport.authenticate('local', { successRedirect: '/',
-        failureRedirect: '/login' }));
+    app.post('/login', passport.authenticate('local', { successReturnToOrRedirect: '/user/profile', failureRedirect: '/login' }));
 
     app.get('/logout', function(req, res) {
         req.logout();
         res.redirect('/');
     });
 
-    app.get('/api', function (req, res) {
+    app.get('/api', ensureLoggedIn('/login'), function (req, res) {
         res.send('TTUPF API is running');
     });
 
     app.get('/horari', horari.init);
     app.get('/horari/actualitza', horari.actualitza);
+
+    app.get('/user/profile', ensureLoggedIn('/login'), user.profile)
 
     app.get('/assignatures/actualitza', assignatures.actualitza);
 };

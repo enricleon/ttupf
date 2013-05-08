@@ -34,3 +34,4 @@ exports.actualitza = function (req, res) {
         }
     });
 }
+

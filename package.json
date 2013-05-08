@@ -17,6 +17,7 @@
     "xpath": "*",
     "passport": "*",
     "passport-local": "*",
-    "passport-local-mongoose": "*"
+    "passport-local-mongoose": "*",
+    "connect-ensure-login": "*"
   }
 }
