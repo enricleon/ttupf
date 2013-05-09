@@ -47,7 +47,7 @@ module.exports = function (app) {
     app.get('/horari', horari.init);
     app.get('/horari/actualitza', horari.actualitza);
 
-    app.get('/user/profile', ensureLoggedIn('/login'), user.profile)
+    app.get('/user/profile.:format', ensureLoggedIn('/login'), user.profile)
 
     app.get('/assignatures/actualitza', assignatures.actualitza);
 };
