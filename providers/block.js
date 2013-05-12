@@ -6,7 +6,7 @@
  * To change this template use File | Settings | File Templates.
  */
 // Constructor
-var Sessio = require('../models/Sessio');
+var Sessio = require('../models/Session');
 
 var Block = module.exports = function(html, data) {
     this.sessions = [];
@@ -16,30 +16,16 @@ var Block = module.exports = function(html, data) {
 
 // properties and methods
 Block.prototype = {
-    NewSessio: function(group, aules) {
-        var sessio = new Sessio();
+    NewSession: function(group, classrooms) {
+        var session = new Sessio();
 
-        if(typeof group != 'undefined') sessio.grup = group;
-        if(typeof aules != 'undefined') sessio.aula = aules;
+        if(typeof group != 'undefined') session.group = group;
+        if(typeof classrooms != 'undefined') session.classroom = classrooms;
 
-        this.sessions.push(sessio);
-    },
-    GetSessio: function(index) {
-        return this.sessions[index];
-    },
-    GetLastSessio: function() {
-        return this.sessions[this.sessions.length - 1];
+        this.sessions.push(session);
     },
     GetSessions: function() {
         return this.sessions;
-    },
-    SaveSessions: function() {
-        this.sessions.forEach(function(element) {
-            element.save(function (err) {
-                if(err != null)
-                    console.log("Alguna cosa ha passat guardant la sessió: " + err.message);
-            });
-        });
     },
     SetPropertyToAll: function(property, value, override) {
         this.sessions.forEach(function (element) {

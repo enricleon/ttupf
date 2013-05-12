@@ -15,14 +15,14 @@ html
                     ul.nav
                         if (typeof(user) == 'undefined')
                             li
-                                a(href="/register") Registra't
+                                a(href="/user/new") Registra't
                             li
                                 a(href="/login") Inicia sessió
                         else
                             li
                                 a(href="/logout") Tanca sesió
                             li
-                                a(href="/user/profile") El meu compte
+                                a(href="/user") El meu compte
 
     .container
         block content

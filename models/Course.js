@@ -9,11 +9,11 @@ var mongoose = require('mongoose');
 
 var Schema = mongoose.Schema, ObjectId = Schema.ObjectId;
 
-var Curs = new Schema({
-    nom:    {type: String, required: true, unique: true},
-    numero: {type: String, required: true, unique: true, index: true}
+var Course = new Schema({
+    name:    {type: String, required: true, unique: true},
+    number: {type: String, required: true, unique: true, index: true}
 });
 
-var Curs = mongoose.model('Curs', Curs);
+var Course = mongoose.model('Course', Course);
 
-module.exports = Curs;
+module.exports = Course;

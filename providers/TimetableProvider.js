@@ -8,23 +8,23 @@
 var request = require("request"),
     xpath = require('xpath'),
     dom = require('xmldom').DOMParser,
-    Block = require('./block'),
-    date = require('./date'),
+    Block = require('./Block'),
+    date = require('./../public/js/date'),
     SessionsProvider = require('./SessionsProvider');
 
 var sessionsProvider;
 
-exports.getHtmlFrom = function(carreraCurs) {
-    sessionsProvider = new SessionsProvider(carreraCurs);
-    request.get(carreraCurs.url_horari, {encoding: "binary"}, function (error, response, body) {
+exports.GetHtmlFrom = function(gradeCourse) {
+    sessionsProvider = new SessionsProvider(gradeCourse);
+    request.get(gradeCourse.timetable_url, {encoding: "binary"}, function (error, response, body) {
         if (!error)
-            carreraCurs.actualitza(body);
+            gradeCourse.update(body);
         else
             console.log(error);
     });
 }
 
-exports.parseCarreraCurs = function(body) {
+exports.ParseGradeCourse = function(body) {
     var xml = body;
     var doc = new dom().parseFromString(xml);
 
@@ -53,7 +53,7 @@ var parseDay = function(item, index) {
     var hora = hores[Math.floor(index/dies.length)].toString();
     var dia = dies[index % dies.length].toString();
 
-    var hora = sessionsProvider.GetHoresInici(hora);
+    var hora = sessionsProvider.GetInitialTime(hora);
     var data = date.parse(dia + " " + hora);
 
     var currentBlock = new Block(item, data);

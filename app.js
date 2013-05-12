@@ -44,7 +44,6 @@ app.configure('production', function(){
 var User = require('./models/User');
 
 passport.use(new LocalStrategy(User.authenticate()));
-
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
@@ -53,6 +52,7 @@ mongoose.connect('localhost', 'ttupf');
 
 // Setup routes
 require('./routes')(app);
+require('./api')(app);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));

@@ -8,21 +8,21 @@
 
 var xpath = require('xpath'),
     dom = require('xmldom').DOMParser,
-    Grau = require('../models/Grau'),
-    Assignatura = require('../models/Assignatura'),
-    Sessio = require('../models/Sessio');
+    Grade = require('../models/Grade'),
+    Subject = require('../models/Subject'),
+    Session = require('../models/Session');
 
 var States = {
     INITIAL : 0,
     HAVE_SESSION : 1,
     HAVE_HOUR : 2,
     HAVE_TYPE : 3,
-    HAVE_ASSIGNATURA : 4,
+    HAVE_SUBJECT : 4,
     END : -1
 }
 
-var SessionsProvider = module.exports = function(carreraCurs) {
-    this.carreraCurs = carreraCurs;
+var SessionsProvider = module.exports = function(gradeCourse) {
+    this.gradeCourse = gradeCourse;
     this.currentState = States.INITIAL;
     this.lastLine = "";
 };
@@ -43,46 +43,46 @@ SessionsProvider.prototype.GetGroupsFromLine = function(group_string) {
     return groups;
 };
 
-// Looks for an aula, and makes use of the $linetype to search that will be like {0 => Aulagrup, 1 => Tipus}
-SessionsProvider.prototype.GetAulesFromLine = function(aula_string) {
-    // Look for an aula on the aulagroup line
-    var aula_test = new RegExp("[0-9]{2}.[A-Za-z0-9][0-9]{2}"); // If line is like PXXX: XX.XXX or SXXX: XX.XXX or SXXX - XX.XXX is aulagrup => 1
+// Looks for an classroom, and makes use of the $linetype to search that will be like {0 => Aulagrup, 1 => Tipus}
+SessionsProvider.prototype.GetClassroomsFromLine = function(classroom_string) {
+    // Look for an classroom on the aulagroup line
+    var classroom_test = new RegExp("[0-9]{2}.[A-Za-z0-9][0-9]{2}"); // If line is like PXXX: XX.XXX or SXXX: XX.XXX or SXXX - XX.XXX is aulagrup => 1
 
-    var aules = [];
+    var classrooms = [];
 
-    var aules = aula_test.exec(aula_string);
+    var classrooms = classroom_test.exec(classroom_string);
 
-    return aules;
+    return classrooms;
 };
 
-SessionsProvider.prototype.GetHoresInici = function(hora_string) {
-    // Look for an aula on the aulagroup line
-    var hora_test = new RegExp("([0-2]?[0-9][:|.][0-5][0-9])(?![0-9])"); // If line matches at least one hour XX:XX hora =>3
+SessionsProvider.prototype.GetInitialTime = function(hour_string) {
+    // Look for an classroom on the aulagroup line
+    var hour_test = new RegExp("([0-2]?[0-9][:|.][0-5][0-9])(?![0-9])"); // If line matches at least one hour XX:XX hora =>3
 
-    var hores = hora_test.exec(hora_string);
+    var hours = hour_test.exec(hour_string);
 
-    return hores[0];
+    return hours[0];
 };
 
 SessionsProvider.prototype.FillSession = function(currentBlock) {
     var groups = this.GetGroupsFromLine(this.lastLine);
-    var aules = this.GetAulesFromLine(this.lastLine);
+    var classrooms = this.GetClassroomsFromLine(this.lastLine);
     var self = this;
 
     if(groups.prac != null || groups.sem != null) {
         if(groups.sem != null) {
             groups.sem.forEach(function(group) {
-                currentBlock.NewSessio(group, aules.toString());
+                currentBlock.NewSession(group, classrooms.toString());
             });
         }
         if(groups.prac != null) {
             groups.prac.forEach(function(group) {
-                currentBlock.NewSessio(group, aules.toString());
+                currentBlock.NewSession(group, classrooms.toString());
             });
         }
     }
     else {
-        currentBlock.NewSessio(this.carreraCurs.grup_teoria, aules.toString());
+        currentBlock.NewSession(this.gradeCourse.theory_group, classrooms.toString());
     }
 };
 
@@ -92,42 +92,42 @@ SessionsProvider.prototype.FillHour = function(currentBlock) {
 };
 
 SessionsProvider.prototype.FillType = function(currentBlock) {
-    //Tenim algo de tipus
-    var tipus = this.lastLine;
+    //Tenim algo de type
+    var type = this.lastLine;
     var regex = /(<([^>]+)>)/ig;
-    var result = tipus.replace(regex, "");
-    currentBlock.SetPropertyToAll("tipus", result);
+    var result = type.replace(regex, "");
+    currentBlock.SetPropertyToAll("type", result);
 
     return;
 };
 
-SessionsProvider.prototype.FillAssignatura = function(currentBlock) {
-    //Tenim el nom de l'assignatura
-    var assignatura = this.lastLine;
+SessionsProvider.prototype.FillSubject = function(currentBlock) {
+    // Whe have now the subject's name.
+    var subject_name = this.lastLine;
 
-    currentBlock.SetPropertyToAll("data", currentBlock.data.toUTCString());
-    currentBlock.SetPropertyToAll("assignatura", assignatura);
+    currentBlock.SetPropertyToAll("timestamp_start", currentBlock.data.toUTCString());
 
     if(currentBlock.Finish) {
+        currentBlock.SetPropertyToAll("subject", subject_name);
         currentBlock.Finish(null, currentBlock);
     }
     else {
-        var curs = this.carreraCurs.curs;
-        var grau = this.carreraCurs.grau;
-        currentBlock.GetSessions().forEach(function(sessio) {
-            var upsertData = sessio.toObject();
+        var course = this.gradeCourse.course;
+        var grade = this.gradeCourse.grade;
+        currentBlock.GetSessions().forEach(function(session) {
+            var upsertData = session.toObject();
 
             // Delete the _id property, otherwise Mongo will return a "Mod on _id not allowed" error
             delete upsertData._id;
 
-            Sessio.findOneAndUpdate({aula: sessio.aula, data: sessio.data}, upsertData, { upsert: true }, function(err, doc) {
-                Assignatura.findOneAndUpdate({nom: assignatura},{$addToSet: {sessions: doc}, curs: curs},{ upsert: true }, function(err, doc){
-                    Grau.findOneAndUpdate({nom: grau.nom},{$addToSet: {assignatures: doc}},{ upsert: true }, function(err, doc){
+            Session.findOneAndUpdate({classroom: session.classroom, timestamp_start: session.timestamp_start}, upsertData, { upsert: true }, function(err, doc) {
+                Subject.findOneAndUpdate({name: subject_name},{$addToSet: {sessions: doc}, course: course},{ upsert: true }, function(err, doc){
+                    Grade.findOneAndUpdate({name: grade.name},{$addToSet: {subjects: doc}},{ upsert: true }, function(err, doc){
                         if(err){
                             console.log(err);
                         }
                         else {
-                            console.log("Sessio relacionada perfectament");
+                            console.log("Session related successfully!");
                         }
                     });
                 });
@@ -140,8 +140,8 @@ SessionsProvider.prototype.FillAssignatura = function(currentBlock) {
 
 SessionsProvider.prototype.LineType = function(line) {
     var has_type = new RegExp("[ÀÁÈÉÍÏÒÓÚÜÑA-Z]{4,}"); // If line has at least 1 uppercase word is type => 0
-    var has_aula = new RegExp("([0-9]{2}.[A-Za-z0-9][0-9]{2})"); // If line is like PXXX: XX.XXX or SXXX: XX.XXX or SXXX - XX.XXX is aulagrup => 1
-    var has_assignatura = new RegExp("^((?:(?:[ÀÁÇÈÉÍÏÒÓÚÜÑA-Z]?[àáçèéíïòóúüña-z\\\'\\s]+)+)+[ÀÁÈÉÍÏÒÓÚÜÑA-Z]*)$"); // This regex is a miracle understandable. Sorry xD NO FUNCIONA DEL TOT, de moment detecta l'assignatura bé però només pot contenir una paraula en majuscula i al final.
+    var has_classroom = new RegExp("([0-9]{2}.[A-Za-z0-9][0-9]{2})"); // If line is like PXXX: XX.XXX or SXXX: XX.XXX or SXXX - XX.XXX is aulagrup => 1
+    var has_subject = new RegExp("^((?:(?:[ÀÁÇÈÉÍÏÒÓÚÜÑA-Z]?[àáçèéíïòóúüña-z\\\'\\s]+)+)+[ÀÁÈÉÍÏÒÓÚÜÑA-Z]*)$"); // This regex is a miracle understandable. Sorry xD NO FUNCIONA DEL TOT, de moment detecta l'subject bé però només pot contenir una paraula en majuscula i al final.
     var has_hour = new RegExp("([0-2]?[0-9][:|.][0-5][0-9])(?![0-9])"); // If line matches at least one hour XX:XX hora =>3
 
     var result = line.match(has_type);
@@ -149,14 +149,14 @@ SessionsProvider.prototype.LineType = function(line) {
         return States.HAVE_TYPE;
     }
 
-    result = line.match(has_aula);
+    result = line.match(has_classroom);
     if (result) {
         return States.HAVE_SESSION;
     }
 
-    result = line.match(has_assignatura);
+    result = line.match(has_subject);
     if (result) {
-        return States.HAVE_ASSIGNATURA;
+        return States.HAVE_SUBJECT;
     }
 
     result = line.match(has_hour);
@@ -178,8 +178,8 @@ SessionsProvider.prototype.ProcessState = function(currentBlock) {
         case States.HAVE_HOUR:
             this.FillHour(currentBlock);
             break;
-        case States.HAVE_ASSIGNATURA:
-            this.FillAssignatura(currentBlock);
+        case States.HAVE_SUBJECT:
+            this.FillSubject(currentBlock);
             break;
         default:
             break;
@@ -191,7 +191,7 @@ SessionsProvider.prototype.StateMachine = function(line, currentBlock) {
     this.lastLine = line;
 
     switch(this.currentState) {
-        //Quan començem ens trobem en aquest estat.
+        // We start here
         case States.INITIAL:
             switch(lineType) {
                 case States.HAVE_SESSION:
@@ -213,8 +213,8 @@ SessionsProvider.prototype.StateMachine = function(line, currentBlock) {
                 case States.HAVE_SESSION:
                     this.currentState = States.HAVE_SESSION;
                     break;
-                case States.HAVE_ASSIGNATURA:
-                    this.currentState = States.HAVE_ASSIGNATURA;
+                case States.HAVE_SUBJECT:
+                    this.currentState = States.HAVE_SUBJECT;
                     break;
                 default:
                     console.log("FALLO: " + currentBlock.data.toString())
@@ -240,16 +240,16 @@ SessionsProvider.prototype.StateMachine = function(line, currentBlock) {
                 case States.HAVE_SESSION:
                     this.currentState = States.HAVE_SESSION;
                     break;
-                case States.HAVE_ASSIGNATURA:
-                    this.currentState = States.HAVE_ASSIGNATURA;
+                case States.HAVE_SUBJECT:
+                    this.currentState = States.HAVE_SUBJECT;
                     break;
                 default:
                     this.currentState = States.END;
                     break;
             }
             break;
-        case States.HAVE_ASSIGNATURA:
-            console.log("Hem acabat el bloc!");
+        case States.HAVE_SUBJECT:
+            console.log("Block ended!");
             break;
         default:
             break;
@@ -259,12 +259,12 @@ SessionsProvider.prototype.StateMachine = function(line, currentBlock) {
 
 SessionsProvider.prototype.ParseBlock = function(currentBlock) {
     var doc = new dom().parseFromString(currentBlock.html.toString());
-    var linies = xpath.select("//div/node()[name() != 'br']", doc);
+    var lines = xpath.select("//div/node()[name() != 'br']", doc);
 
     var self = this;
 
     //Parsejem la sessió de l'última linia a la primera
-    linies.reverse().forEach(function(item, index) {
+    lines.reverse().forEach(function(item, index) {
 
         //Netejem la lína d'informació que no volem
         var content = item.toString();
