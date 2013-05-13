@@ -12,9 +12,14 @@
 	"mongodb": "*",
 	"mongoose": "*",
     "request": "*",
-    "stylus": "*",
     "vows": "*",
     "xmldom": "*",
-    "xpath": "*"
+    "xpath": "*",
+    "passport": "*",
+    "passport-local": "*",
+    "passport-local-mongoose": "*",
+    "connect-ensure-login": "*",
+    "node-html-encoder": "*",
+
   }
 }

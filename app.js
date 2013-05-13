@@ -7,37 +7,52 @@ var express = require('express'),
     mongoose = require('mongoose'),
     http = require('http'),
     path = require('path'),
-    horari = require('./routes/horari'),
-    assignatures = require('./routes/assignatures'),
-    tests = require('./routes/test');
-
-mongoose.connect('localhost', 'ttupf');
+    passport = require('passport'),
+    LocalStrategy = require('passport-local').Strategy;
 
 var app = express();
 
+// Configuration
 app.configure(function(){
-  app.set('port', process.env.PORT || 3000);
-  app.set('views', __dirname + '/views');
-  app.set('view engine', 'jade');
-  app.use(express.favicon());
-  app.use(express.logger('dev'));
-  app.use(express.bodyParser());
-  app.use(express.methodOverride());
-  app.use(app.router);
-  app.use(require('stylus').middleware(__dirname + '/public'));
-  app.use(express.static(path.join(__dirname, 'public')));
+    app.set('port', process.env.PORT || 3000);
+    app.set('views', __dirname + '/views');
+    app.set('view engine', 'jade');
+    app.set('view options', { layout: false });
+
+    app.use(express.logger());
+    app.use(express.bodyParser());
+    app.use(express.methodOverride());
+
+    app.use(express.cookieParser('keyboard cat'));
+    app.use(express.session({ secret: 'keyboard cat' }));
+
+    app.use(passport.initialize());
+    app.use(passport.session());
+
+    app.use(app.router);
+    app.use(express.static(path.join(__dirname, 'public')));
 });
 
 app.configure('development', function(){
-  app.use(express.errorHandler());
+    app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
 });
 
-app.get('/horari', horari.init);
-app.get('/horari/actualitza', horari.actualitza);
+app.configure('production', function(){
+    app.use(express.errorHandler());
+});
 
-app.get('/assignatures/actualitza', assignatures.actualitza);
+var User = require('./models/User');
 
-app.get('/test/parsertest', tests.parsertest);
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+// Connect mongoose
+mongoose.connect('localhost', 'ttupf');
+
+// Setup routes
+require('./routes')(app);
+require('./api')(app);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));

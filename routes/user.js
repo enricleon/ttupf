@@ -1,8 +1,56 @@
-
-/*
- * GET users listing.
+/**
+ * EspaiAulaProvider is to connect with UPF's EspaiAula and to provide user course's information. request package is to
+ * make requests to external domains.
  */
+var EspaiAulaProvider = require('../providers/EspaiAulaProvider');
+var request = require('request');
 
-exports.list = function(req, res){
-  res.send("respond with a resource");
+var User = require('../models/User');
+
+/**
+ * GET This renders the user profile
+ * @param res is the response the client is receiving.
+ * @param req is the request sended by the client
+ */
+exports.profile = function(req, res){
+    res.render('user/profile', {title: "Perfil d'usuari", user: req.user});
 };
+
+/**
+ * POST This creates a new user profile
+ * @param res is the response the client is receiving.
+ * @param req is the request sended by the client
+ */
+exports.new = function(req, res) {
+    User.register(new User({ username : req.body.username }), req.body.password, function(err, user) {
+        if (err) {
+            res.redirect('/user/new');
+        }
+        req.login(user, function (error) {
+            if (error) {
+                throw error;
+            }
+            res.redirect('/user');
+        });
+    });
+}
+
+/**
+ * PUT This modifies the request's user with the sended parameters.
+ * @param res is the response the client is receiving.
+ * @param req is the request sended by the client
+ */
+exports.edit = function(res, req) {
+    var current_user = req.user;
+    // Do things with req.body.things
+    if(false) {
+        current_user.save(function(err) {
+            if(err) {
+                res.redirect('/user/edit');
+            }
+            else {
+                res.redirect('/user');
+            }
+        });
+    }
+}
