@@ -83,7 +83,7 @@ module.exports = function (app) {
     app.get('/timetable/update', timetable.update);
 
     // This updates the courses from the UPF program
-    app.get('/courses/update/', subjects.update);
+    app.get('/subjects/update/', subjects.update);
 
     app.get('/timetable/test', function() {
         var html = '<td id="cela_15"><div align="center">Sistemes Operatius <br><b>SEMINARI</b><br>S102: 52.329<br><b>PRÀCTIQUES</b><br>P102: 54.004<br></div></td>';

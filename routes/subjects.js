@@ -6,8 +6,8 @@
  * To change this template use File | Settings | File Templates.
      */
 
-var Grau = require('../models/Grade');
-var Assignatura = require('../models/Subject');
+var Grade = require('../models/Grade');
+var Subject = require('../models/Subject');
 
 var ObjectId = require('mongoose').Types.ObjectId;
 
@@ -17,7 +17,7 @@ exports.update = function (req, res) {
     //per cada grade, aga
     res.render('simpleMessage', { title: 'Actualització de la llista de asignatures', message: "La llista de subjects s'està actualitzant..." });
 
-    Grau.find({}).exec(function (err, graus){
+    Grade.find({}).exec(function (err, graus){
         // here you are iterating through the users
         // but you don't know when it will finish
         if(err){
@@ -27,9 +27,8 @@ exports.update = function (req, res) {
 
                 var codi = grau.code;
                 grau.subjects.forEach(function (assignatura){
-
-                    Assignatura.findById(new ObjectId(assignatura.id), function(err, assignatura) {
-                        assignatura.actualitza(codi_grau);
+                    Subject.findById(new ObjectId(assignatura.id), function(err, assignatura) {
+                        assignatura.update(codi);
                     });
                 });
             });
