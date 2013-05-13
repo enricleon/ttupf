@@ -28,6 +28,7 @@ module.exports = function (app) {
     /**
      * Timetable routes
      */
+    app.get('/api/timetable/:username/config', timetable.config);
     app.get('/api/timetable/:username', timetable.index);
     app.get('/api/timetable/:username/:date', timetable.index);
 };

@@ -13,3 +13,9 @@ exports.index = function(req, res){
     res.send(JSON.stringify({response: "Timetable index!"}));
 };
 
+/*
+ * GET This executes the configurator
+ */
+exports.config = function(req, res){
+    res.send(JSON.stringify({response: "Timetable config!"}));
+};

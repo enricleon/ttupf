@@ -104,6 +104,9 @@ module.exports = function (app) {
      */
 
     // Timetable route is an authenticated route responsible to show the personal today's timetable to the user
+    app.get('/timetable/config', ensureLoggedIn('/login'), timetable.config);
+
+    // Timetable route is an authenticated route responsible to show the personal today's timetable to the user
     app.get('/timetable', ensureLoggedIn('/login'), timetable.init);
 
     // Timetable route/:date shows the personal daily timetable to the user on the specified date

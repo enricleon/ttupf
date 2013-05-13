@@ -18,6 +18,8 @@
     "passport": "*",
     "passport-local": "*",
     "passport-local-mongoose": "*",
-    "connect-ensure-login": "*"
+    "connect-ensure-login": "*",
+    "node-html-encoder": "*",
+
   }
 }

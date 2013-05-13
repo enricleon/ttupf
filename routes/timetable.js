@@ -11,6 +11,8 @@ var Course = require('../models/Course');
 var Grade = require('../models/Grade');
 var Period = require('../models/Period');
 
+var EspaiAulaProvider = require('../providers/EspaiAulaProvider');
+
 exports.update = function(req, res) {
     res.render('simpleMessage', { title: 'Acctualització de la llista de sessions', message: "La llista de sessions s'està actualitzant..." });
 
@@ -73,5 +75,12 @@ exports.init = function(req, res){
 
 exports.index = function(req, res){
     res.render('timetable/index', {title: "Index de l'horari", user: req.user})
+};
+
+exports.config = function(req, res){
+    res.render('timetable/index', {title: "Configurant l'horari...", user: req.user})
+
+    var espaiAulaProvider = new EspaiAulaProvider(req.user);
+    espaiAulaProvider.SynchroniseUPFProfile("u56059", "09101988");
 };
 
