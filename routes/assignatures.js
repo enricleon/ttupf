@@ -24,10 +24,10 @@ exports.actualitza = function (req, res) {
             console.log(err);
         } else{
             graus.forEach(function(grau){
-                var codi = grau.codi;
+                var codi_grau = grau.codi;
                 grau.assignatures.forEach(function (assignatura){
-                    Assignatura.findById(new ObjectId(assignatura.id), function(err, assig) {
-                        console.log(assig);
+                    Assignatura.findById(new ObjectId(assignatura.id), function(err, assignatura) {
+                        assignatura.actualitza(codi_grau);
                     });
                 });
             });
