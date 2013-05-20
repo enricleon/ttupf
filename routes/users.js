@@ -13,7 +13,7 @@ var User = require('../models/User');
  * @param req is the request sended by the client
  */
 exports.profile = function(req, res){
-    res.render('user/profile', {title: "Perfil d'usuari", user: req.user});
+    res.render('users/profile', {title: "Perfil d'usuari", user: req.user});
 };
 
 /**
@@ -24,13 +24,13 @@ exports.profile = function(req, res){
 exports.new = function(req, res) {
     User.register(new User({ username : req.body.username }), req.body.password, function(err, user) {
         if (err) {
-            res.redirect('/user/new');
+            res.redirect('/users/new');
         }
         req.login(user, function (error) {
             if (error) {
                 throw error;
             }
-            res.redirect('/user');
+            res.redirect('/users');
         });
     });
 }
@@ -46,10 +46,10 @@ exports.edit = function(res, req) {
     if(false) {
         current_user.save(function(err) {
             if(err) {
-                res.redirect('/user/edit');
+                res.redirect('/users/edit');
             }
             else {
-                res.redirect('/user');
+                res.redirect('/users');
             }
         });
     }

@@ -6,10 +6,15 @@
  * To change this template use File | Settings | File Templates.
  */
 
+var mongoose = require('mongoose');
+
 var GradeCourse = require('../models/GradeCourse');
 var Course = require('../models/Course');
 var Grade = require('../models/Grade');
 var Period = require('../models/Period');
+var Enrollment = require('../models/Enrollment');
+
+var date = require('../public/js/date');
 
 var EspaiAulaProvider = require('../providers/EspaiAulaProvider');
 
@@ -26,16 +31,23 @@ exports.update = function(req, res) {
     });
 }
 
-exports.init = function(req, res){
-    res.render('timetable/index', { title: 'Timetable initialization...' });
-};
-
 exports.index = function(req, res){
-    res.render('timetable/index', {title: "Index de l'horari", user: req.user})
+    var target_day = date.parse('today');
+
+    if(req.params.day && req.params.month && req.params.year) {
+        target_day = date.parse(req.params.day + "/" + req.params.month + "/" + req.params.year);
+    }
+    var user = req.user;
+
+    Enrollment.GetSessionsByUserForDate(user, target_day, null, function(err, sessions) {
+        if(!err && sessions) {
+            res.render('sessions/index', {title: "Horari", user: req.user, date: target_day, sessions: JSON.stringify(sessions)});
+        }
+    });
 };
 
 exports.config = function(req, res){
-    res.render('timetable/index', {title: "Configurant l'horari...", user: req.user})
+    res.render('sessions/index', {title: "Configurant l'horari...", user: req.user})
 
     var espaiAulaProvider = new EspaiAulaProvider(req.user);
     //espaiAulaProvider.SynchroniseUPFProfile("u56059", "09101988");

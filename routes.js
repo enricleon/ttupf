@@ -18,8 +18,8 @@ var User = require('./models/User');
 /**
  * Routes
  */
-var timetable = require('./routes/timetable'),
-    user = require('./routes/user'),
+var sessions = require('./routes/sessions'),
+    users = require('./routes/users'),
     subjects = require('./routes/subjects');
 
 
@@ -39,22 +39,22 @@ module.exports = function (app) {
      */
 
     // This renders the user profile
-    app.get('/user', ensureLoggedIn('/login'), user.profile);
+    app.get('/users', ensureLoggedIn('/login'), users.profile);
 
     // This is to edit a new user
-    app.put('/user', ensureLoggedIn('/login'), user.edit);
+    app.put('/users', ensureLoggedIn('/login'), users.edit);
 
     // This is to create a new user
-    app.post('/user', user.new);
+    app.post('/users', users.new);
 
     // This renders the register form
-    app.get('/user/new', function(req, res) {
-        res.render('user/new_form', { title: "Crea un nou usuari" });
+    app.get('/users/new', function(req, res) {
+        res.render('users/new_form', { title: "Crea un nou usuari" });
     });
 
     // This renders the edit user form
-    app.get('/user/edit', ensureLoggedIn('/login'), function(req, res) {
-        res.render('user/edit_form', { title: "Edita el teu perfil", user: req.user });
+    app.get('/users/edit', ensureLoggedIn('/login'), function(req, res) {
+        res.render('users/edit_form', { title: "Edita el teu perfil", user: req.user });
     });
 
     /**
@@ -63,11 +63,11 @@ module.exports = function (app) {
 
     // This renders the login form
     app.get('/login', function(req, res) {
-        res.render('user/login', { user : req.user, title: "Log In" });
+        res.render('users/login', { user : req.user, title: "Log In" });
     });
 
     // This is to put a user into the request if these is correct. If so, the user is redirected to his profile, either
-    app.post('/login', passport.authenticate('local', { successReturnToOrRedirect: '/user', failureRedirect: '/login' }));
+    app.post('/login', passport.authenticate('local', { successReturnToOrRedirect: '/users', failureRedirect: '/login' }));
 
     // This is to remove a user from the request and redirects to the home
     app.get('/logout', function(req, res) {
@@ -80,12 +80,12 @@ module.exports = function (app) {
      */
 
     // This triggers the UPF timetable parser
-    app.get('/timetable/update', timetable.update);
+    app.get('/sessions/update', sessions.update);
 
     // This updates the courses from the UPF program
     app.get('/subjects/update/', subjects.update);
 
-    app.get('/timetable/test', function() {
+    app.get('/sessions/test', function() {
         var html = '<td id="cela_15"><div align="center">Sistemes Operatius <br><b>SEMINARI</b><br>S102: 52.329<br><b>PRÀCTIQUES</b><br>P102: 54.004<br></div></td>';
         var date = Date.parse("11/01/2013 18:30");
 
@@ -104,11 +104,11 @@ module.exports = function (app) {
      */
 
     // Timetable route is an authenticated route responsible to show the personal today's timetable to the user
-    app.get('/timetable/config', ensureLoggedIn('/login'), timetable.config);
+    app.get('/users/config', ensureLoggedIn('/login'), sessions.config);
 
     // Timetable route is an authenticated route responsible to show the personal today's timetable to the user
-    app.get('/timetable', ensureLoggedIn('/login'), timetable.init);
+    app.get('/sessions', ensureLoggedIn('/login'), sessions.index);
 
     // Timetable route/:date shows the personal daily timetable to the user on the specified date
-    app.get('/timetable/:date', ensureLoggedIn('/login'), timetable.index);
+    app.get('/sessions/:day/:month/:year', ensureLoggedIn('/login'), sessions.index);
 };
