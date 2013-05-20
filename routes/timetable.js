@@ -38,7 +38,8 @@ exports.config = function(req, res){
     res.render('timetable/index', {title: "Configurant l'horari...", user: req.user})
 
     var espaiAulaProvider = new EspaiAulaProvider(req.user);
-    espaiAulaProvider.SynchroniseUPFProfile("u56059", "09101988");
+    //espaiAulaProvider.SynchroniseUPFProfile("u56059", "09101988");
     //espaiAulaProvider.SynchroniseUPFProfile("u64379", "659446033");
+    espaiAulaProvider.SynchroniseUPFProfile("u56094", "ttupfttupf1");
 };
 

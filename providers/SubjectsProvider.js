@@ -13,12 +13,14 @@ var xpath = require('xpath');
 var Encoder = require('node-html-encoder').Encoder;
 var NameDistanceProvider = require('./NameDistanceProvider');
 
+var Grade = require('../models/Grade');
+
 var SubjectsProvider = module.exports = function() {
     this.base_urls = ["http://www.upf.edu/pra/"];
     this.subjects = {};
 };
 
-SubjectsProvider.prototype.UpdateSubjectsProgram = function(program) {
+SubjectsProvider.prototype.UpdateSubjectsProgram = function(program, grade_code) {
     var me = this;
     tidy(program, function(err, res){
         if(!err){
@@ -57,6 +59,11 @@ SubjectsProvider.prototype.UpdateSubjectsProgram = function(program) {
                 Subject.findOneAndUpdate({name: name}, {$addToSet: {code: { $each:  subject.code}}}, {upsert: true}, function(err, doc) {
                     if(!err && doc) {
                         console.log("Assignatura guardada correctament");
+                        Grade.findOneAndUpdate({code: grade_code},{$addToSet: {subjects: doc}},{ upsert: true }, function(err, grade){
+                            if(err){
+                                console.log(err);
+                            }
+                        });
                     }
                 });
             });
@@ -68,6 +75,7 @@ SubjectsProvider.prototype.UpdateSubjectsProgram = function(program) {
 };
 
 SubjectsProvider.prototype.UpdateAllSubjects = function(grade_code) {
+
     var urls = new Array();
     this.base_urls.forEach(function(base_url) {
         urls.push(base_url + grade_code)
@@ -81,7 +89,7 @@ SubjectsProvider.prototype.UpdateAllSubjects = function(grade_code) {
             method: 'GET',
             encoding: 'binary'
         }, function (error, response, body){
-            me.UpdateSubjectsProgram(body);
+            me.UpdateSubjectsProgram(body, grade_code);
         });
     });
 };

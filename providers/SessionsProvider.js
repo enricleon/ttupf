@@ -129,16 +129,18 @@ SessionsProvider.prototype.FillSubject = function(currentBlock) {
                 if(!err && session_doc) {
                     NameDistanceProvider.DistanceDictionary(subject_name, null, function(distance_dictionary) {
                         var lower_distance = NameDistanceProvider.LowerDistance(distance_dictionary);
+                        var saveGrade = false;
 
                         if(lower_distance.distance >= 12) {
                             lower_distance.name = subject_name;
+                            saveGrade = true;
                         }
                         Subject.findOneAndUpdate({name: lower_distance.name},{$addToSet: {sessions: session_doc}, course: course},{ upsert: true }, function(err, subject_doc){
                             if(err){
                                 console.log(err);
                             }
-                            else {
-                                Grade.findOneAndUpdate({name: grade.name},{$addToSet: {subjects: subject_doc}},{ upsert: true }, function(err, grade){
+                            else if(saveGrade){
+                                Grade.findOneAndUpdate(grade,{$addToSet: {subjects: subject_doc}},{ upsert: true }, function(err, doc_grade){
                                     if(err){
                                         console.log(err);
                                     }
