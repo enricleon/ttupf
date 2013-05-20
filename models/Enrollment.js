@@ -28,23 +28,26 @@ Enrollment.statics.GetSessionsByUserForDate = function(user, target_d, num_days,
     this.find({user: user}).populate("subject").exec(function(err, docs){
         var sessions = [];
         var count = docs.length;
-        docs.forEach(function(enrollment) {
-            Session.findOne({_id: {$in: enrollment.subject.sessions}, timestamp_start: {$gte: target_d, $lt: next_d}, group: {$in: [enrollment.theory_group, enrollment.practicum_group, enrollment.seminar_group]}}).exec(function(err, doc) {
-                if(!err && doc) {
-                    //if(doc.group == enrollment.theory_group || doc.group == enrollment.practicum_group || doc.group == enrollment.seminar_group) {
-                    var session = doc.toObject();
-                    delete session._id;
-                    session.subject = enrollment.subject.name;
-                    console.log(JSON.stringify(session));
-                    sessions.push(session);
-                    //}
-                }
-                count--;
-                if(count == 0) {
-                    callback(null, sessions);
-                }
+        if(count > 0) {
+            docs.forEach(function(enrollment) {
+                Session.findOne({_id: {$in: enrollment.subject.sessions}, timestamp_start: {$gte: target_d, $lt: next_d}, group: {$in: [enrollment.theory_group, enrollment.practicum_group, enrollment.seminar_group]}}).exec(function(err, doc) {
+                    if(!err && doc) {
+                        //if(doc.group == enrollment.theory_group || doc.group == enrollment.practicum_group || doc.group == enrollment.seminar_group) {
+                        var session = doc.toObject();
+                        delete session._id;
+                        session.subject = enrollment.subject.name;
+                        console.log(JSON.stringify(session));
+                        sessions.push(session);
+                        //}
+                    }
+                    count--;
+                    if(count == 0) {
+                        callback(null, sessions);
+                    }
+                });
             });
-        });
+        }
+        callback("No hi ha enrollments per a aquest usuari");
     });
 }
 
