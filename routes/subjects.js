@@ -8,6 +8,7 @@
 
 var Grade = require('../models/Grade');
 var Subject = require('../models/Subject');
+var SubjectsProvider = require('../providers/SubjectsProvider');
 
 var ObjectId = require('mongoose').Types.ObjectId;
 
@@ -17,22 +18,11 @@ exports.update = function (req, res) {
     //per cada grade, aga
     res.render('simpleMessage', { title: 'Actualització de la llista de asignatures', message: "La llista de subjects s'està actualitzant..." });
 
-    Grade.find({}).exec(function (err, graus){
-        // here you are iterating through the users
-        // but you don't know when it will finish
-        if(err){
-            console.log(err);
-        } else{
-            graus.forEach(function(grau){
-
-                var codi = grau.code;
-                grau.subjects.forEach(function (assignatura){
-                    Subject.findById(new ObjectId(assignatura.id), function(err, assignatura) {
-                        assignatura.update(codi);
-                    });
-                });
-            });
-        }
+    Grade.find({}).exec(function (err, grades){
+        var subjectsProvider = new SubjectsProvider();
+        grades.forEach(function(grade){
+            subjectsProvider.UpdateAllSubjects(grade.code);
+        });
     });
 }
 

@@ -7,6 +7,10 @@ var User = require('../models/User');
 var Subject = require('../models/Subject');
 var Enrollment = require('../models/Enrollment');
 
+var mongoose = require('mongoose');
+var Schema = mongoose.Schema, ObjectId = Schema.ObjectId;
+var NameDistanceProvider = require('./NameDistanceProvider');
+
 var EnrollmentsProvider = module.exports = function(user) {
     this.user = user;
     this.enrollments = [];
@@ -46,20 +50,37 @@ EnrollmentsProvider.prototype.FinishEnrollments = function() {
     var user = this.user;
 
     this.enrollments.forEach(function(item, index) {
-        Subject.findOne({codes: item.subject_code}, function(err, doc) {
+        Subject.findOne({code: item.subject_code}, function(err, doc) {
             if(!err){
-                Enrollment.findOneAndUpdate({user: user, subject: doc},{
-                    seminar_group: item.seminar_group,
-                    practicum_group: item.practicum_group,
-                    theory_group: item.theory_group
-                },{ upsert: true }, function(err, doc){
-                    if(err){
-                        console.log(err);
-                    }
-                    else {
-                        console.log("Enrollment updated or created successfully!");
-                    }
-                });
+                if(doc) {
+                    var upsert_data = {};
+
+                    if(item.seminar_group) upsert_data.seminar_group = item.seminar_group;
+                    if(item.theory_group) upsert_data.theory_group = item.theory_group;
+                    if(item.practicum_group) upsert_data.practicum_group = item.practicum_group;
+
+                    Enrollment.findOneAndUpdate({user: user, subject: doc}, upsert_data,{ upsert: true }, function(err, doc){
+                        if(err){
+                            console.log(err);
+                        }
+                        else {
+                            console.log("Enrollment updated or created successfully!");
+                        }
+                    });
+                }
+                else {
+                    NameDistanceProvider.DistanceDictionary(item.subject_name, null, function(distance_dictionary) {
+                        var lower_distance = NameDistanceProvider.LowerDistance(distance_dictionary);
+
+                        if(lower_distance.distance < 3) {
+                            Subject.findOneAndUpdate({name: lower_distance.name, $addToSet: { code: item.subject_code}}, {}, { upsert: true }, function(err, subject_doc){
+                                if(err){
+                                    console.log(err);
+                                }
+                            });
+                        }
+                    });
+                }
             }
         });
     });
@@ -90,13 +111,15 @@ EnrollmentsProvider.prototype.ProcessState = function(line) {
     }
 
     if(this.currentState == states.HAVE_SUBJECT) {
-        var subject_test = new RegExp("([0-9]{1,10})[\\-]([0-9])"); // If line matches at least one hour XX:XX hora =>3
+        var subject_test = new RegExp("([0-9]{1,10})[\\-]([0-9])\\s((?:(?:[ÀÁÇÈÉÍÏÒÓÚÜÑA-Z]?[àáçèéíïòóúüña-z\\'\\s\\.\\-·]+)+)+[ÀÁÈÉÍÏÒÓÚÜÑA-Z0-9]*)"); // If line matches at least one hour XX:XX hora =>3
         var result_subject = line_decoded.match(subject_test);
         var subject_code = result_subject[1];
         var theory_group = result_subject[2];
+        var subject_name = result_subject[3];
 
         this.currentEnrollment.subject_code = subject_code;
         this.currentEnrollment.theory_group = theory_group;
+        this.currentEnrollment.subject_name = subject_name;
 
         this.enrollments.push(this.currentEnrollment);
         this.currentEnrollment = {};

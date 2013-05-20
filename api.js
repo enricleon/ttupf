@@ -14,7 +14,7 @@ var passport = require('passport'),
 /**
  * Routes
  */
-var timetable = require('./api/timetable'),
+var session = require('./api/session'),
     user = require('./api/user');
 
 module.exports = function (app) {
@@ -28,7 +28,6 @@ module.exports = function (app) {
     /**
      * Timetable routes
      */
-    app.get('/api/timetable/:username/config', timetable.config);
-    app.get('/api/timetable/:username', timetable.index);
-    app.get('/api/timetable/:username/:date', timetable.index);
+    app.get('/api/sessions', session.GetAllSessions);
+    app.get('/api/sessions/:date', session.GetSessionsByDate);
 };

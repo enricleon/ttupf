@@ -2,7 +2,7 @@
  * External Libraries
  */
 /* Passport is required to manage all the user authentication in the system. Conect-ensure-login is required to grant
-   user acces on sensible pages */
+   user access on sensible pages */
 var passport = require('passport'),
     ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn;
 

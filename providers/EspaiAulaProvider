@@ -54,7 +54,7 @@ EspaiAulaProvider.prototype.GetEspaiAula = function(callback) {
     request({
         uri: me.url_espai_aula,
         method: "post",
-        encoding: "utf8",
+        encoding: "binary",
         form: {
             OPERACIO: "ESTUDIANT",
             cg_opciomenu: "Espai Aula"

@@ -27,50 +27,7 @@ exports.update = function(req, res) {
 }
 
 exports.init = function(req, res){
-    var period_d = new Period({
-        quarter: 2,
-        year: new Date(2013)
-    });
-
-    var grade_d = new Grade({
-        name: "Grade en Enginyeria Informàtica",
-        code: "3377"
-    });
-
-    var curs_d = new Course({
-        name: "Primer",
-        number: 1
-    });
-
-    grade_d.save(function(err) {
-        if(err != null) {
-            console.log(err.message)
-        }
-        else {
-            console.log("OK");
-        }
-    });
-    curs_d.save();
-    period_d.save();
-
-    var gei_c1_t2_g1 = new GradeCourse({
-        timetable_url: "http://www.upf.edu/esup/docencia/horaris1213/graus12_13/horaris_1213_GET_C2_T2_G1.html",
-        theory_group: "1",
-        grade: grade_d,
-        period: period_d,
-        course: curs_d
-    });
-
-    gei_c1_t2_g1.save(function (err) {
-        if (err) {
-            console.log("Error: " + err.message);
-        }
-        else {
-            res.send("Se ha guardado con exito");
-        }
-    });
-
-    res.render('index', { title: 'GradeCourse...' });
+    res.render('timetable/index', { title: 'Timetable initialization...' });
 };
 
 exports.index = function(req, res){
@@ -82,5 +39,6 @@ exports.config = function(req, res){
 
     var espaiAulaProvider = new EspaiAulaProvider(req.user);
     espaiAulaProvider.SynchroniseUPFProfile("u56059", "09101988");
+    //espaiAulaProvider.SynchroniseUPFProfile("u64379", "659446033");
 };
 

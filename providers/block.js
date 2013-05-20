@@ -33,5 +33,8 @@ Block.prototype = {
                 element[property] = value;
             }
         });
+    },
+    Reset: function() {
+        this.sessions = [];
     }
 };

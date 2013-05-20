@@ -12,6 +12,8 @@ var xpath = require('xpath'),
     Subject = require('../models/Subject'),
     Session = require('../models/Session');
 
+var NameDistanceProvider = require('./NameDistanceProvider');
+
 var States = {
     INITIAL : 0,
     HAVE_SESSION : 1,
@@ -114,24 +116,41 @@ SessionsProvider.prototype.FillSubject = function(currentBlock) {
     else {
         var course = this.gradeCourse.course;
         var grade = this.gradeCourse.grade;
-        currentBlock.GetSessions().forEach(function(session) {
+
+        var block_sessions = currentBlock.GetSessions();
+        currentBlock.Reset();
+        block_sessions.forEach(function(session) {
             var upsertData = session.toObject();
 
             // Delete the _id property, otherwise Mongo will return a "Mod on _id not allowed" error
             delete upsertData._id;
 
-            Session.findOneAndUpdate({classroom: session.classroom, timestamp_start: session.timestamp_start}, upsertData, { upsert: true }, function(err, doc) {
-                Subject.findOneAndUpdate({name: subject_name},{$addToSet: {sessions: doc}, course: course},{ upsert: true }, function(err, doc){
-                    Grade.findOneAndUpdate({name: grade.name},{$addToSet: {subjects: doc}},{ upsert: true }, function(err, doc){
-                        if(err){
-                            console.log(err);
+            Session.findOneAndUpdate({classroom: session.classroom, timestamp_start: session.timestamp_start}, upsertData, { upsert: true }, function(err, session_doc) {
+                if(!err && session_doc) {
+                    NameDistanceProvider.DistanceDictionary(subject_name, null, function(distance_dictionary) {
+                        var lower_distance = NameDistanceProvider.LowerDistance(distance_dictionary);
+
+                        if(lower_distance.distance >= 12) {
+                            lower_distance.name = subject_name;
                         }
-                        else {
-                            console.log("Session related successfully!");
-                        }
+                        Subject.findOneAndUpdate({name: lower_distance.name},{$addToSet: {sessions: session_doc}, course: course},{ upsert: true }, function(err, subject_doc){
+                            if(err){
+                                console.log(err);
+                            }
+                            else {
+                                Grade.findOneAndUpdate({name: grade.name},{$addToSet: {subjects: subject_doc}},{ upsert: true }, function(err, grade){
+                                    if(err){
+                                        console.log(err);
+                                    }
+                                });
+                            }
+                        });
                     });
-                });
-            })
+                }
+                else {
+                    console.log(err);
+                }
+            });
         });
     }
 
@@ -141,7 +160,7 @@ SessionsProvider.prototype.FillSubject = function(currentBlock) {
 SessionsProvider.prototype.LineType = function(line) {
     var has_type = new RegExp("[ÀÁÈÉÍÏÒÓÚÜÑA-Z]{4,}"); // If line has at least 1 uppercase word is type => 0
     var has_classroom = new RegExp("([0-9]{2}.[A-Za-z0-9][0-9]{2})"); // If line is like PXXX: XX.XXX or SXXX: XX.XXX or SXXX - XX.XXX is aulagrup => 1
-    var has_subject = new RegExp("^((?:(?:[ÀÁÇÈÉÍÏÒÓÚÜÑA-Z]?[àáçèéíïòóúüña-z\\\'\\s]+)+)+[ÀÁÈÉÍÏÒÓÚÜÑA-Z]*)$"); // This regex is a miracle understandable. Sorry xD NO FUNCIONA DEL TOT, de moment detecta l'subject bé però només pot contenir una paraula en majuscula i al final.
+    var has_subject = new RegExp("^((?:(?:[ÀÁÇÈÉÍÏÒÓÚÜÑA-Z]?[àáçèéíïòóúüña-z\\'\\s\\.\\-·]+)+)+[ÀÁÈÉÍÏÒÓÚÜÑA-Z0-9]*)$"); // This regex is a miracle understandable. Sorry xD NO FUNCIONA DEL TOT, de moment detecta l'subject bé però només pot contenir una paraula en majuscula i al final.
     var has_hour = new RegExp("([0-2]?[0-9][:|.][0-5][0-9])(?![0-9])"); // If line matches at least one hour XX:XX hora =>3
 
     var result = line.match(has_type);
@@ -281,6 +300,7 @@ SessionsProvider.prototype.ParseBlock = function(currentBlock) {
             }
             else {
                 console.log("End of parsing");
+                self.currentState = States.INITIAL;
             }
         }
     });
