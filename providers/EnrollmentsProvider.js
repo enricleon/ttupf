@@ -1,7 +1,6 @@
 var xpath = require('xpath'),
     dom = require('xmldom').DOMParser,
-    tidy = require('htmltidy').tidy,
-    ent = require('ent');
+    tidy = require('htmltidy').tidy;
 
 var User = require('../models/User');
 var Subject = require('../models/Subject');
