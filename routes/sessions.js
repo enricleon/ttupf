@@ -43,9 +43,6 @@ exports.index = function(req, res){
         if(!err && sessions) {
             res.render('sessions/index', {title: "Horari", user: req.user, date: target_day, sessions: sessions});
         }
-        else {
-            res.render('simpleMessage', {title: "No s'han trobat assignatures matriculades", message: err, user: req.user});
-        }
     });
 };
 
