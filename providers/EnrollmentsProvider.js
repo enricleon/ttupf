@@ -58,6 +58,7 @@ EnrollmentsProvider.prototype.FinishEnrollments = function() {
                     if(item.seminar_group) upsert_data.seminar_group = item.seminar_group;
                     if(item.theory_group) upsert_data.theory_group = item.theory_group;
                     if(item.practicum_group) upsert_data.practicum_group = item.practicum_group;
+                    else upsert_data.practicum_group = "P101";
 
                     Enrollment.findOneAndUpdate({user: user, subject: doc}, upsert_data,{ upsert: true }, function(err, doc){
                         if(err){

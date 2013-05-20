@@ -11,3 +11,12 @@ block content
     h1= title
     if (user)
         p Hola #{user.username}, comença a configurar el teu horari!
+        form(action="/users/config", method="post")
+            div
+                label Nia
+                input(type="text", name="nia")
+            div
+                label Contrassenya
+                input(type="password", name="password")
+            div
+                input(type="submit", value="Synchronize!")

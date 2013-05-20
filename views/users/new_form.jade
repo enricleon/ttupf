@@ -4,6 +4,12 @@ block content
     h2= title
     form(action="/users",method="post")
         div
+            label Nom
+            input(type="text",name="name")
+        div
+            label Cognoms
+            input(type="text",name="last_name")
+        div
             label Nom d'usuari
             input(type="text",name="username")
         div
@@ -12,5 +18,8 @@ block content
         div
             label Repeteix la contrassenya
             input(type="password",name="repeat_password")
+        div
+            label Correu electrònic
+            input(type="email",name="email")
         div
             input(type="submit",value="Register")

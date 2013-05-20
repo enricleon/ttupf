@@ -39,7 +39,9 @@ module.exports = function (app) {
      */
 
     // This renders the user profile
-    app.get('/users', ensureLoggedIn('/login'), users.profile);
+    app.get('/users/profile', ensureLoggedIn('/login'), users.profile);
+
+    app.get('/users', ensureLoggedIn('/login'), sessions.index);
 
     // This is to edit a new user
     app.put('/users', ensureLoggedIn('/login'), users.edit);
@@ -67,7 +69,7 @@ module.exports = function (app) {
     });
 
     // This is to put a user into the request if these is correct. If so, the user is redirected to his profile, either
-    app.post('/login', passport.authenticate('local', { successReturnToOrRedirect: '/users', failureRedirect: '/login' }));
+    app.post('/login', passport.authenticate('local', { successReturnToOrRedirect: '/users/profile', failureRedirect: '/login' }));
 
     // This is to remove a user from the request and redirects to the home
     app.get('/logout', function(req, res) {
@@ -104,7 +106,7 @@ module.exports = function (app) {
      */
 
     // Timetable route is an authenticated route responsible to show the personal today's timetable to the user
-    app.get('/users/config', ensureLoggedIn('/login'), sessions.config);
+    app.post('/users/config', ensureLoggedIn('/login'), sessions.config);
 
     // Timetable route is an authenticated route responsible to show the personal today's timetable to the user
     app.get('/sessions', ensureLoggedIn('/login'), sessions.index);

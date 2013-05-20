@@ -22,7 +22,12 @@ exports.profile = function(req, res){
  * @param req is the request sended by the client
  */
 exports.new = function(req, res) {
-    User.register(new User({ username : req.body.username }), req.body.password, function(err, user) {
+    User.register(new User({
+            username : req.body.username,
+            name: req.body.name,
+            last_name: req.body.last_name,
+            email: req.body.email
+        }), req.body.password, function(err, user) {
         if (err) {
             res.redirect('/users/new');
         }
@@ -30,7 +35,7 @@ exports.new = function(req, res) {
             if (error) {
                 throw error;
             }
-            res.redirect('/users');
+            res.redirect('/users/profile');
         });
     });
 }
@@ -49,7 +54,7 @@ exports.edit = function(res, req) {
                 res.redirect('/users/edit');
             }
             else {
-                res.redirect('/users');
+                res.redirect('/users/profile');
             }
         });
     }

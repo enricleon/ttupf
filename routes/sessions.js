@@ -41,17 +41,18 @@ exports.index = function(req, res){
 
     Enrollment.GetSessionsByUserForDate(user, target_day, null, function(err, sessions) {
         if(!err && sessions) {
-            res.render('sessions/index', {title: "Horari", user: req.user, date: target_day, sessions: JSON.stringify(sessions)});
+            res.render('sessions/index', {title: "Horari", user: req.user, date: target_day, sessions: sessions});
         }
     });
 };
 
 exports.config = function(req, res){
-    res.render('sessions/index', {title: "Configurant l'horari...", user: req.user})
+    res.render('simpleMessage', {title: "Configurant l'horari...", message: "En breus instants ja podrà consulatar el seu horari.", user: req.user});
+
+    var nia = req.body.nia;
+    var password = req.body.password;
 
     var espaiAulaProvider = new EspaiAulaProvider(req.user);
-    //espaiAulaProvider.SynchroniseUPFProfile("u56059", "09101988");
-    //espaiAulaProvider.SynchroniseUPFProfile("u64379", "659446033");
-    espaiAulaProvider.SynchroniseUPFProfile("u56094", "ttupfttupf1");
+    espaiAulaProvider.SynchroniseUPFProfile(nia, password);
 };
 
