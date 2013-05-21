@@ -73,9 +73,23 @@ EnrollmentsProvider.prototype.FinishEnrollments = function() {
                         var lower_distance = NameDistanceProvider.LowerDistance(distance_dictionary);
 
                         if(lower_distance.distance < 3) {
-                            Subject.findOneAndUpdate({name: lower_distance.name, $addToSet: { code: item.subject_code}}, {}, { upsert: true }, function(err, subject_doc){
-                                if(err){
-                                    console.log(err);
+                            Subject.findOneAndUpdate({name: lower_distance.name}, {$addToSet: { code: item.subject_code}}, { upsert: true }, function(err, subject_doc){
+                                if(!err && subject_doc){
+                                    var upsert_data = {};
+
+                                    if(item.seminar_group) upsert_data.seminar_group = item.seminar_group;
+                                    if(item.theory_group) upsert_data.theory_group = item.theory_group;
+                                    if(item.practicum_group) upsert_data.practicum_group = item.practicum_group;
+                                    else upsert_data.practicum_group = "P101";
+
+                                    Enrollment.findOneAndUpdate({user: user, subject: subject_doc}, upsert_data,{ upsert: true }, function(err, enrollment_doc){
+                                        if(err){
+                                            console.log(err);
+                                        }
+                                        else {
+                                            console.log("Enrollment updated or created successfully!");
+                                        }
+                                    });
                                 }
                             });
                         }
