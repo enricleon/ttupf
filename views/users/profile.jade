@@ -9,36 +9,50 @@ extends ../layout
 
 block scripts
     script(src='/js/enrollments.js')
+    script(src='/js/profile.js')
 
 block content
     h1= title
     if (user)
-        p Hola #{user.username}, comença a configurar el teu horari!
-        if enrollments && enrollments.length > 0
-            table.table.table-hover#enrollments
-                thead
-                    tr
-                        th Assignatura
-                        th Pràctiques
-                        th Seminari
-                each enrollment in enrollments
-                    tbody
-                        tr
-                            td(style="vertical-align: middle;")= enrollment.subject.name
-                                input.enrollment_id(type="hidden", name="enrollment", value= enrollment._id)
-                            td(style="vertical-align: middle;")
-                                input.editable(name="practicum_group", style="vertical-align: middle;", value= enrollment.practicum_group, disabled)
-                            td(style="vertical-align: middle;")
-                                input.editable(name="seminar_group", style="vertical-align: middle;", value= enrollment.seminar_group, disabled)
-                            td
-                                a.edit_enrollment.icon-edit(href="#")
+        ul.nav.nav-tabs
+            if enrollments && enrollments.length > 0
+                li.active
+                    a.profile_tab#enrollments_tab Assignatures i grups
+                li
+                    a.profile_tab#espai_aula_tab Espai Aula
+            else
+                li.active
+                    a.profile_tab#espai_aula_tab Espai Aula
 
-        form(action="/users/config", method="post")
-            div
-                label Nia
-                input(type="text", name="nia")
-            div
-                label Contrassenya
-                input(type="password", name="password")
-            div
-                input.btn.btn-primary(type="submit", value="Synchronize!")
+        #espai_aula(style=enrollments && enrollments.length > 0 ? "display: none;" : "")
+            p Hola #{user.username}, comença a configurar el teu horari!
+            form(action="/users/config", method="post")
+                div
+                    label NIS
+                    input(type="text", name="nia", placeholder="u00000")
+                div
+                    label Contrassenya
+                    input(type="password", name="password", placeholder="Contrassenya del campus global")
+                div
+                    input.btn.btn-primary(type="submit", value="Synchronize!")
+
+        #enrollments(style=enrollments && enrollments.length > 0 ? "" : "display: none;")
+            if enrollments && enrollments.length > 0
+                p Edita les teves assignatures i els seus grups de pràctiques o seminari
+                table.table.table-hover#enrollments
+                    thead
+                        tr
+                            th Assignatura
+                            th Pràctiques
+                            th Seminari
+                    each enrollment in enrollments
+                        tbody
+                            tr
+                                td(style="vertical-align: middle;")= enrollment.subject.name
+                                    input.enrollment_id(type="hidden", name="enrollment", value= enrollment._id)
+                                td(style="vertical-align: middle;")
+                                    input.editable(name="practicum_group", style="vertical-align: middle;", value= enrollment.practicum_group, disabled)
+                                td(style="vertical-align: middle;")
+                                    input.editable(name="seminar_group", style="vertical-align: middle;", value= enrollment.seminar_group, disabled)
+                                td
+                                    a.edit_enrollment.icon-edit(href="#")
