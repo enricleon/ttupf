@@ -14,8 +14,8 @@ block content
     h1= title
     if (user)
         p Hola #{user.username}, comença a configurar el teu horari!
-        if enrollments
-            table.table.table-hover
+        if enrollments && enrollments.length > 0
+            table.table.table-hover#enrollments
                 thead
                     tr
                         th Assignatura
@@ -41,4 +41,4 @@ block content
                 label Contrassenya
                 input(type="password", name="password")
             div
-                input(type="submit", value="Synchronize!")
+                input.btn.btn-primary(type="submit", value="Synchronize!")

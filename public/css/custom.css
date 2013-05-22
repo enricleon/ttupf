@@ -17,7 +17,11 @@ body {
     color: #B94A48;
 }
 
-input[disabled] {
+#enrollments input:not([disabled]) {
+    margin: -2px;
+}
+
+#enrollments input[disabled] {
     border: none !important;
     cursor: text;
     background-color: inherit;

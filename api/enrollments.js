@@ -18,11 +18,11 @@ exports.edit = function(res, req) {
     var body = req.body;
 
     if(body.enrollment && body.seminar_group && body.practicum_group) {
-        Enrollment.findOneAndUpdate(mongoose.Schema.ObjectId(body.enrollment), {seminar_group: body.seminar_group, practicum_group: body.practicum_group}, {}, function(err, doc) {
-            res.redirect('/users/profile');
+        Enrollment.findOneAndUpdate({_id: body.enrollment}, {seminar_group: body.seminar_group, practicum_group: body.practicum_group}, {}, function(err, doc) {
+            res.send({enrollment: doc, error: err});
         });
     }
     else {
-        res.redirect('/users/profile');
+        res.send({text: "missing fields"});
     }
 }

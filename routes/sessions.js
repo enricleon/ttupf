@@ -40,9 +40,7 @@ exports.index = function(req, res){
     var user = req.user;
 
     Enrollment.GetSessionsByUserForDate(user, target_day, null, function(err, sessions) {
-        if(!err && sessions) {
-            res.render('sessions/index', {title: "Horari", user: req.user, date: target_day, sessions: sessions});
-        }
+        res.render('sessions/index', {title: "Horari", user: req.user, date: target_day, sessions: sessions});
     });
 };
 

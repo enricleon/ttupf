@@ -11,8 +11,8 @@ $(document).ready(function() {
 
         var current_enrollment = $(this).parents("tr");
         var current_enrollment_id = $(current_enrollment).find(".enrollment_id").attr("value");
-        var ce_seminar_group = $(current_enrollment).find(".enrollment_id").attr("value");
-        var ce_practicum_group = $(current_enrollment).find(".enrollment_id").attr("value");
+        var ce_seminar_group = $(current_enrollment).find(".editable[name=\"seminar_group\"]").attr("value");
+        var ce_practicum_group = $(current_enrollment).find(".editable[name=\"practicum_group\"]").attr("value");
 
         $(".edit_enrollment").each(function(){
             $(this).show();
@@ -25,7 +25,7 @@ $(document).ready(function() {
         $(current_enrollment).css("background-color", "rgb(255, 255, 255)");
 
         $.ajax({
-            url: "/enrollments",
+            url: "/api/enrollments",
             type: 'PUT',
             contentType: 'application/json',
             data: JSON.stringify({ enrollment: current_enrollment_id, seminar_group: ce_seminar_group, practicum_group: ce_practicum_group}),
