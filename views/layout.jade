@@ -4,9 +4,9 @@ html
         title= title
         link(rel='stylesheet', href='/css/bootstrap.css')
         link(rel='stylesheet', href='/css/custom.css')
+        script(src='/js/jquery.min.js')
+        script(src='/js/bootstrap.min.js')
         block scripts
-            script(src='/js/jquery.min.js')
-            script(src='/js/bootstrap.min.js')
     body
         .navbar.navbar-inverse.navbar-fixed-top
             .navbar-inner
@@ -15,14 +15,16 @@ html
                     ul.nav
                         if (typeof(user) == 'undefined')
                             li
-                                a(href="/register") Registra't
+                                a(href="/users/new") Registra't
                             li
                                 a(href="/login") Inicia sessió
                         else
                             li
                                 a(href="/logout") Tanca sesió
                             li
-                                a(href="/user/profile") El meu compte
+                                a(href="/users/profile") El meu compte
+                            li
+                                a(href="/sessions") El meu horari
 
     .container
         block content

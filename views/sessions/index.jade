@@ -1,0 +1,21 @@
+extends ../layout
+
+block content
+    h1= title
+    if (user)
+        p Hola #{user.username}, Aquest es l'índex del teu horari!
+        p Dia: #{date}
+        table.table.table-hover
+            thead
+                tr
+                    th Hora
+                    th Assignatura
+                    th Tipus
+                    th Aula
+            each session in sessions
+                tbody
+                    tr
+                        td= session.timestamp_start.toString("HH:mm")
+                        td= session.subject
+                        td= session.type
+                        td= session.classroom

@@ -9,12 +9,11 @@ var mongoose = require('mongoose');
 
 var Schema = mongoose.Schema, ObjectId = Schema.ObjectId;
 
-var Grau = new Schema({
-    nom:        {type: String, required: true},
-    codi:       {type: String, required: true, unique: true},
-    assignatures: {type: [ObjectId], ref: 'Assignatura'}
+var Quarter = new Schema({
+    period:        {type: ObjectId, ref: 'Period', required: true},
+    subject:    {type: ObjectId, ref: 'Subject', required: true}
 });
 
-var Grau = mongoose.model('Grau', Grau);
+var Quarter = mongoose.model('Quarter', Quarter);
 
-module.exports = Grau;
+module.exports = Quarter;

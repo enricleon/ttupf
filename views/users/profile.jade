@@ -1,0 +1,44 @@
+//
+   Created with JetBrains WebStorm.
+   User: Enric
+   Date: 8/05/13
+   Time: 18:49
+   To change this template use File | Settings | File Templates.
+
+extends ../layout
+
+block scripts
+    script(src='/js/enrollments.js')
+
+block content
+    h1= title
+    if (user)
+        p Hola #{user.username}, comença a configurar el teu horari!
+        if enrollments
+            table.table.table-hover
+                thead
+                    tr
+                        th Assignatura
+                        th Pràctiques
+                        th Seminari
+                each enrollment in enrollments
+                    tbody
+                        tr
+                            td(style="vertical-align: middle;")= enrollment.subject.name
+                                input.enrollment_id(type="hidden", name="enrollment", value= enrollment._id)
+                            td(style="vertical-align: middle;")
+                                input.editable(name="practicum_group", style="vertical-align: middle;", value= enrollment.practicum_group, disabled)
+                            td(style="vertical-align: middle;")
+                                input.editable(name="seminar_group", style="vertical-align: middle;", value= enrollment.seminar_group, disabled)
+                            td
+                                a.edit_enrollment.icon-edit(href="#")
+
+        form(action="/users/config", method="post")
+            div
+                label Nia
+                input(type="text", name="nia")
+            div
+                label Contrassenya
+                input(type="password", name="password")
+            div
+                input(type="submit", value="Synchronize!")

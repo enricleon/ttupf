@@ -8,6 +8,7 @@ var express = require('express'),
     http = require('http'),
     path = require('path'),
     passport = require('passport'),
+    Config = require('./config'),
     LocalStrategy = require('passport-local').Strategy;
 
 var app = express();
@@ -44,7 +45,6 @@ app.configure('production', function(){
 var User = require('./models/User');
 
 passport.use(new LocalStrategy(User.authenticate()));
-
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
@@ -53,6 +53,17 @@ mongoose.connect('localhost', 'ttupf');
 
 // Setup routes
 require('./routes')(app);
+require('./api')(app);
+
+// We read the Configuration file:
+fs = require('fs');
+fs.readFile('./config/Configuration.xml', 'utf8', function (err,data) {
+    if (err) {
+        console.log(err);
+    }
+    var config = new Config();
+    config.LoadConfig(data);
+});
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));
