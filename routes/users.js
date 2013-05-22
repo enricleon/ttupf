@@ -6,6 +6,7 @@ var EspaiAulaProvider = require('../providers/EspaiAulaProvider');
 var request = require('request');
 
 var User = require('../models/User');
+var Enrollment = require('../models/Enrollment');
 
 /**
  * GET This renders the user profile
@@ -13,7 +14,14 @@ var User = require('../models/User');
  * @param req is the request sended by the client
  */
 exports.profile = function(req, res){
-    res.render('users/profile', {title: "Perfil d'usuari", user: req.user});
+    Enrollment.find({user: req.user}).populate("subject").exec(function(err, docs) {
+        if(!err && docs) {
+            res.render('users/profile', {title: "Perfil d'usuari", user: req.user, enrollments: docs});
+        }
+        else{
+            res.render('users/profile', {title: "Perfil d'usuari", user: req.user});
+        }
+    });
 };
 
 /**

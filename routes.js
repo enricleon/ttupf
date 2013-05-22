@@ -20,7 +20,8 @@ var User = require('./models/User');
  */
 var sessions = require('./routes/sessions'),
     users = require('./routes/users'),
-    subjects = require('./routes/subjects');
+    subjects = require('./routes/subjects'),
+    enrollments = require('./routes/enrollments');
 
 
 module.exports = function (app) {
@@ -76,6 +77,8 @@ module.exports = function (app) {
         req.logout();
         res.redirect('/');
     });
+
+    app.post('/enrollments', ensureLoggedIn('/login'), enrollments.edit);
 
     /**
      * Parser trigger rotues
