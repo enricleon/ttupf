@@ -19,7 +19,7 @@ var date = require('../public/js/date');
 var EspaiAulaProvider = require('../providers/EspaiAulaProvider');
 
 exports.update = function(req, res) {
-    res.render('simpleMessage', { title: 'Acctualització de la llista de sessions', message: "La llista de sessions s'està actualitzant..." });
+    res.render('simpleMessage', { title: 'Actualització de la llista de sessions', message: "La llista de sessions s'està actualitzant..." });
 
     GradeCourse.find({}).populate('course grade period').exec(function (err, gradePeriods){
         // here you are iterating through the users
@@ -45,7 +45,7 @@ exports.index = function(req, res){
 };
 
 exports.config = function(req, res){
-    res.render('simpleMessage', {title: "Configurant l'horari...", message: "En breus instants ja podrà consulatar el seu horari.", user: req.user});
+    res.render('simpleMessage', {title: "Configurant l'horari...", message: "En breus instants ja podràs consultar el teu horari.", user: req.user});
 
     var nia = req.body.nia;
     var password = req.body.password;

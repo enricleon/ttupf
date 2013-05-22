@@ -35,10 +35,13 @@ block content
 
         form(action="/users/config", method="post")
             div
-                label Nia
+                h2 Configuració automàtica
+                p Introdueix el teu uNIS i la contrasenya del Campus Global per configurar les teves assignatures i grups automàticament a partir de la informació que hi ha al teu Espai Aula. No guardem les teves dades.
+            div
+                label uNIS (Codi Campus Global)
                 input(type="text", name="nia")
             div
-                label Contrassenya
+                label Contrasenya
                 input(type="password", name="password")
             div
-                input.btn.btn-primary(type="submit", value="Synchronize!")
+                input.btn.btn-primary(type="submit", value="Configura les assignatures")
