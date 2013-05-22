@@ -78,7 +78,7 @@ module.exports = function (app) {
         res.redirect('/');
     });
 
-    app.post('/enrollments', ensureLoggedIn('/login'), enrollments.edit);
+    app.put('/enrollments', ensureLoggedIn('/login'), enrollments.edit);
 
     /**
      * Parser trigger rotues
