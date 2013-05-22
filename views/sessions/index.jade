@@ -4,18 +4,21 @@ block content
     h1= title
     if (user)
         p Hola #{user.username}, Aquest es l'índex del teu horari!
-        p Dia: #{date}
-        table.table.table-hover
-            thead
-                tr
-                    th Hora
-                    th Assignatura
-                    th Tipus
-                    th Aula
-            each session in sessions
-                tbody
+        if sessions && sessions.length > 0
+            p Dia: #{date}
+            table.table.table-hover
+                thead
                     tr
-                        td= session.timestamp_start.toString("HH:mm")
-                        td= session.subject
-                        td= session.type
-                        td= session.classroom
+                        th Hora
+                        th Assignatura
+                        th Tipus
+                        th Aula
+                each session in sessions
+                    tbody
+                        tr
+                            td= session.timestamp_start.toString("HH:mm")
+                            td= session.subject
+                            td= session.type
+                            td= session.classroom
+        else
+            p Sembla que no tens l'horari configurat, <a href="/users/profile">configura</a> el teu horari!
