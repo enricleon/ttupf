@@ -25,7 +25,7 @@ $(document).ready(function() {
         $(current_enrollment).css("background-color", "rgb(255, 255, 255)");
 
         $.ajax({
-            url: "/enrollments",
+            url: "/api/enrollments",
             type: 'PUT',
             contentType: 'application/json',
             data: JSON.stringify({ enrollment: current_enrollment_id, seminar_group: ce_seminar_group, practicum_group: ce_practicum_group}),
