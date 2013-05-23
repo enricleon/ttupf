@@ -34,6 +34,17 @@ exports.update = function(req, res) {
 exports.index = function(req, res){
     req.user.HasEnrollments(function(err, has_enrollments) {
         if(!err && has_enrollments) {
+            res.redirect('/sessions');
+        }
+        else {
+            res.render("simpleMessage", { title: 'Horari', message: "Sembla que no has matriculat assignatures o no tens l'horari configurat. Fes click <a href='/users/profile'>aquí</a> per a configurar el teu horari" });
+        }
+    });
+};
+
+exports.show = function(req, res){
+    req.user.HasEnrollments(function(err, has_enrollments) {
+        if(!err && has_enrollments) {
             var target_day = date.parse('today');
 
             if(req.params.day && req.params.month && req.params.year) {

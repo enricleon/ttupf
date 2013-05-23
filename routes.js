@@ -90,11 +90,17 @@ module.exports = function (app) {
      * Parser trigger rotues
      */
 
+    // Timetable route is an authenticated route responsible to show the personal today's timetable to the user
+    app.get('/sessions', ensureLoggedIn('/login'), sessions.show);
+
+    // Timetable route is an authenticated route responsible to show the personal today's timetable to the user
+    app.get('/sessions/index', ensureLoggedIn('/login'), sessions.index);
+
     // This triggers the UPF timetable parser
     app.get('/sessions/update', sessions.update);
 
-    // This updates the courses from the UPF program
-    app.get('/subjects/update/', subjects.update);
+    // Timetable route/:date shows the personal daily timetable to the user on the specified date
+    app.get('/sessions/:day/:month/:year', ensureLoggedIn('/login'), sessions.index);
 
     app.get('/sessions/test', function() {
         var html = '<td id="cela_15"><div align="center">Sistemes Operatius <br><b>SEMINARI</b><br>S102: 52.329<br><b>PRÀCTIQUES</b><br>P102: 54.004<br></div></td>';
@@ -116,10 +122,4 @@ module.exports = function (app) {
 
     // Timetable route is an authenticated route responsible to show the personal today's timetable to the user
     app.post('/users/config', ensureLoggedIn('/login'), sessions.config);
-
-    // Timetable route is an authenticated route responsible to show the personal today's timetable to the user
-    app.get('/sessions', ensureLoggedIn('/login'), sessions.index);
-
-    // Timetable route/:date shows the personal daily timetable to the user on the specified date
-    app.get('/sessions/:day/:month/:year', ensureLoggedIn('/login'), sessions.index);
 };

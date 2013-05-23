@@ -15,8 +15,8 @@ var passport = require('passport'),
 /**
  * Routes
  */
-var session = require('./api/session'),
-    user = require('./api/user');
+var session = require('./api/sessions'),
+    user = require('./api/users');
 
 module.exports = function (app) {
     /**
