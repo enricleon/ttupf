@@ -32,15 +32,22 @@ exports.update = function(req, res) {
 }
 
 exports.index = function(req, res){
-    var target_day = date.parse('today');
+    req.user.HasEnrollments(function(err, has_enrollments) {
+        if(!err && has_enrollments) {
+            var target_day = date.parse('today');
 
-    if(req.params.day && req.params.month && req.params.year) {
-        target_day = date.parse(req.params.day + "/" + req.params.month + "/" + req.params.year);
-    }
-    var user = req.user;
+            if(req.params.day && req.params.month && req.params.year) {
+                target_day = date.parse(req.params.day + "/" + req.params.month + "/" + req.params.year);
+            }
+            var user = req.user;
 
-    Enrollment.GetSessionsByUserForDate(user, target_day, null, function(err, sessions) {
-        res.render('sessions/index', {title: "Horari", user: req.user, date: target_day, sessions: sessions});
+            Enrollment.GetSessionsByUserForDate(user, target_day, null, function(err, sessions) {
+                res.render('sessions/index', {title: "Horari", user: req.user, date: target_day, sessions: sessions});
+            });
+        }
+        else {
+            res.redirect("/users/profile");
+        }
     });
 };
 

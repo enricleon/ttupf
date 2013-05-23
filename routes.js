@@ -29,8 +29,18 @@ module.exports = function (app) {
      */
 
     // This renders the home page
-    app.get('/', function (req, res) {
+    app.get('/index', function (req, res) {
         res.render('index', { title: "Timetable University", user : req.user });
+    });
+
+    // This renders the home page
+    app.get('/', function (req, res) {
+        if(req.user) {
+            res.redirect('/users/profile');
+        }
+        else {
+            res.redirect('/index');
+        }
     });
 
     /**
@@ -68,7 +78,7 @@ module.exports = function (app) {
     });
 
     // This is to put a user into the request if these is correct. If so, the user is redirected to his profile, either
-    app.post('/login', passport.authenticate('local', { successReturnToOrRedirect: '/users/profile', failureRedirect: '/login' }));
+    app.post('/login', passport.authenticate('local', { successReturnToOrRedirect: '/sessions', failureRedirect: '/login' }));
 
     // This is to remove a user from the request and redirects to the home
     app.get('/logout', function(req, res) {
