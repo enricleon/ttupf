@@ -11,14 +11,14 @@ var EspaiAulaProvider = module.exports = function(user) {
     this.user = user;
 };
 
-EspaiAulaProvider.prototype.SynchroniseUPFProfile = function(username, password) {
+EspaiAulaProvider.prototype.SynchroniseUPFProfile = function(username, password, callback) {
     this.username = username;
     this.password = password;
 
     var me = this;
 
     this.LoginCampusGlobal(function(espaiaula) {
-        var enrollmentsProvider = new EnrollmentsProvider(me.user);
+        var enrollmentsProvider = new EnrollmentsProvider(me.user, callback);
         enrollmentsProvider.Start(espaiaula);
     });
 };

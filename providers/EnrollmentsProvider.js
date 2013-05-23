@@ -1,6 +1,7 @@
 var xpath = require('xpath'),
     dom = require('xmldom').DOMParser,
-    tidy = require('htmltidy').tidy;
+    tidy = require('htmltidy').tidy,
+    async = require('async');
 
 var User = require('../models/User');
 var Subject = require('../models/Subject');
@@ -10,11 +11,12 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema, ObjectId = Schema.ObjectId;
 var NameDistanceProvider = require('./NameDistanceProvider');
 
-var EnrollmentsProvider = module.exports = function(user) {
+var EnrollmentsProvider = module.exports = function(user, callback) {
     this.user = user;
     this.enrollments = [];
     this.currentEnrollment = {};
     this.currentState = states.INITIAL;
+    this.callback = callback;
 };
 
 var states = {
@@ -45,59 +47,68 @@ EnrollmentsProvider.prototype.Start = function(espaiaula) {
     });
 };
 
+EnrollmentsProvider.prototype.GetEnrolled = function(enrollment, subject, user, callback) {
+    var upsert_data = {};
+
+    if(enrollment.seminar_group) upsert_data.seminar_group = enrollment.seminar_group;
+    if(enrollment.theory_group) upsert_data.theory_group = enrollment.theory_group;
+    if(enrollment.practicum_group) upsert_data.practicum_group = enrollment.practicum_group;
+    else upsert_data.practicum_group = "P101";
+
+    Enrollment.findOneAndUpdate({user: user, subject: subject}, upsert_data,{ upsert: true }, function(err, doc){
+        if(err){
+            callback(err);
+        }
+        else {
+            callback(null, doc);
+        }
+    });
+}
+
 EnrollmentsProvider.prototype.FinishEnrollments = function() {
-    var user = this.user;
+    var me = this;
+    var calls = [];
 
-    this.enrollments.forEach(function(item, index) {
-        Subject.findOne({code: item.subject_code}, function(err, doc) {
-            if(!err){
-                if(doc) {
-                    var upsert_data = {};
-
-                    if(item.seminar_group) upsert_data.seminar_group = item.seminar_group;
-                    if(item.theory_group) upsert_data.theory_group = item.theory_group;
-                    if(item.practicum_group) upsert_data.practicum_group = item.practicum_group;
-                    else upsert_data.practicum_group = "P101";
-
-                    Enrollment.findOneAndUpdate({user: user, subject: doc}, upsert_data,{ upsert: true }, function(err, doc){
-                        if(err){
-                            console.log(err);
-                        }
-                        else {
-                            console.log("Enrollment updated or created successfully!");
-                        }
-                    });
+    this.enrollments.forEach(function(enrollment, index) {
+        calls.push(function(callback) {
+            Subject.findOne({code: enrollment.subject_code}, function(err, subject_found) {
+                if(err){
+                    callback(err);
                 }
                 else {
-                    NameDistanceProvider.DistanceDictionary(item.subject_name, null, function(distance_dictionary) {
-                        var lower_distance = NameDistanceProvider.LowerDistance(distance_dictionary);
+                    if(subject_found) {
+                        me.GetEnrolled(enrollment, subject_found, me.user, callback);
+                    }
+                    else {
+                        NameDistanceProvider.DistanceDictionary(enrollment.subject_name, null, function(distance_dictionary) {
+                            if(distance_dictionary) {
+                                var lower_distance = NameDistanceProvider.LowerDistance(distance_dictionary);
 
-                        if(lower_distance.distance < 3) {
-                            Subject.findOneAndUpdate({name: lower_distance.name}, {$addToSet: { code: item.subject_code}}, { upsert: true }, function(err, subject_doc){
-                                if(!err && subject_doc){
-                                    var upsert_data = {};
-
-                                    if(item.seminar_group) upsert_data.seminar_group = item.seminar_group;
-                                    if(item.theory_group) upsert_data.theory_group = item.theory_group;
-                                    if(item.practicum_group) upsert_data.practicum_group = item.practicum_group;
-                                    else upsert_data.practicum_group = "P101";
-
-                                    Enrollment.findOneAndUpdate({user: user, subject: subject_doc}, upsert_data,{ upsert: true }, function(err, enrollment_doc){
-                                        if(err){
-                                            console.log(err);
+                                if(lower_distance.distance < 3) {
+                                    Subject.findOneAndUpdate({name: lower_distance.name}, {$addToSet: { code: enrollment.subject_code}}, { upsert: true }, function(err, subject_found){
+                                        if(!err && subject_found){
+                                            me.GetEnrolled(enrollment, subject_found, me.user, callback);
                                         }
                                         else {
-                                            console.log("Enrollment updated or created successfully!");
+                                            callback(err);
                                         }
                                     });
                                 }
-                            });
-                        }
-                    });
+                                else {
+                                    callback(null);
+                                }
+                            }
+                            else {
+                                callback(null);
+                            }
+                        });
+                    }
                 }
-            }
+            });
         });
     });
+
+    async.parallel(calls, me.callback);
 };
 
 EnrollmentsProvider.prototype.ProcessState = function(line) {

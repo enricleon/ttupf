@@ -19,6 +19,9 @@ exports.DistanceDictionary = function(name, names_array, callback) {
 
                 callback(distance_dictionary);
             }
+            else{
+                callback(null);
+            }
         });
     }
 };

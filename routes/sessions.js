@@ -45,12 +45,12 @@ exports.index = function(req, res){
 };
 
 exports.config = function(req, res){
-    res.render('simpleMessage', {title: "Configurant l'horari...", message: "En breus instants ja podràs consultar el teu horari.", user: req.user});
-
     var unis = req.body.unis;
     var password = req.body.password;
 
     var espaiAulaProvider = new EspaiAulaProvider(req.user);
-    espaiAulaProvider.SynchroniseUPFProfile(unis, password);
+    espaiAulaProvider.SynchroniseUPFProfile(unis, password, function(err, cosa) {
+        res.redirect('/users/profile');
+    });
 };
 
