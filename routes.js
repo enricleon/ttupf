@@ -100,7 +100,7 @@ module.exports = function (app) {
     app.get('/sessions/update', sessions.update);
 
     // Timetable route/:date shows the personal daily timetable to the user on the specified date
-    app.get('/sessions/:day/:month/:year', ensureLoggedIn('/login'), sessions.index);
+    app.get('/sessions/:day/:month/:year', ensureLoggedIn('/login'), sessions.show);
 
     app.get('/sessions/test', function() {
         var html = '<td id="cela_15"><div align="center">Sistemes Operatius <br><b>SEMINARI</b><br>S102: 52.329<br><b>PRÀCTIQUES</b><br>P102: 54.004<br></div></td>';
