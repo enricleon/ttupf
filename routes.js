@@ -119,9 +119,6 @@ module.exports = function (app) {
     /**
      * Timetable routes
      */
-    app.get('/google13c67901941e365e.html', function(req, res) {
-        res.render('google13c67901941e365e.html');
-    });
 
     // Timetable route is an authenticated route responsible to show the personal today's timetable to the user
     app.post('/users/config', ensureLoggedIn('/login'), sessions.config);
