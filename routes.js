@@ -30,7 +30,7 @@ module.exports = function (app) {
 
     // This renders the home page
     app.get('/index', function (req, res) {
-        res.render('index', { title: "Timetable University", user : req.user });
+        res.render('index', { title: "Timetable UPF", user : req.user });
     });
 
     // This renders the home page
