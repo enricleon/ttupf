@@ -1,39 +1,56 @@
 /**
  * External Libraries
  */
-/* Passport is required to manage all the user authentication in the system. Conect-ensure-login is required to grant
- user acces on sensible pages */
-var passport = require('passport'),
-    ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn,
-    enrollments = require('./api/enrollments');
+var restify = require('express-restify-mongoose'),
+    oauth2 = require('./providers/Oauth2');
 
 /**
  * Model Libraries
  */
+var SessionModel = require('./models/Session'),
+    UserModel = require('./models/User'),
+    SubjectModel = require('./models/Subject'),
+    EnrollmentModel = require('./models/Enrollment'),
+    GradeModel = require('./models/Grade'),
+    CourseModel = require('./models/Course'),
+    PeriodModel = require('./models/Period'),
+    QuarterModel = require('./models/Quarter'),
+    GradeCourseModel = require('./models/GradeCourse.js');
 
+var AccessToken = require('./models/AccessToken');
 
 /**
  * Routes
  */
-var session = require('./api/sessions'),
-    user = require('./api/users');
 
-module.exports = function (app) {
+
+module.exports = function (app, passport) {
+
+    /**
+     * Oauth2 routes
+     */
+    app.get('/dialog/authorize', oauth2.authorization);
+    app.post('/dialog/authorize/decision', oauth2.decision);
+    app.post('/oauth/token', oauth2.token);
+
     /**
      * User routes
      */
-    app.get('/api/users/:username', user.profile);
-    app.post('/api/users/:username', user.new);
-    app.put('/api/users/:username', user.edit);
+    restify.serve(app, UserModel, { middleware: [passport.authenticate('bearer', { session: false })]});
 
     /**
      * Timetable routes
      */
-    app.get('/api/sessions', session.GetAllSessions);
-    app.get('/api/sessions/:date', session.GetSessionsByDate);
+    restify.serve(app, SessionModel);
 
     /**
      * Enrollment routes
      */
-    app.put('/api/enrollments', enrollments.edit);
+    restify.serve(app, EnrollmentModel);
+
+    /**
+     * Subjects routes
+     */
+    restify.serve(app, SubjectModel);
+
 };

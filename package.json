@@ -21,6 +21,11 @@
     "connect-ensure-login": "*",
     "node-html-encoder": "*",
     "distance": "*",
-    "async": "*"
+    "async": "*",
+    "express-restify-mongoose": "*",
+    "oauth2orize": "*",
+    "passport-http-bearer": "*",
+    "passport-http": "*",
+    "passport-oauth2-client-password": "*"
   }
 }
