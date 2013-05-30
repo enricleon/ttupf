@@ -14,6 +14,8 @@ var express = require('express'),
     BasicStrategy = require('passport-http').BasicStrategy,
     ClientPasswordStrategy = require('passport-oauth2-client-password').Strategy;
 
+var AccessToken = require("./models/AccessToken");
+
 var app = express();
 
 // Configuration
@@ -92,7 +94,7 @@ passport.use(new ClientPasswordStrategy(
  */
 passport.use(new BearerStrategy(
     function(access_token, done) {
-        AccessToken.findOne({token: access_token}).populate("user").xec(function(err, token) {
+        AccessToken.findOne({token: access_token}).populate("user").exec(function(err, token) {
             if (err) { return done(err); }
             if (!token) { return done(null, false); }
 
