@@ -17,6 +17,8 @@ var SessionModel = require('./models/Session'),
     QuarterModel = require('./models/Quarter'),
     GradeCourseModel = require('./models/GradeCourse.js');
 
+var enrollments = require('./api/enrollments');
+
 var AccessToken = require('./models/AccessToken');
 
 /**
@@ -32,6 +34,8 @@ module.exports = function (app, passport) {
     app.get('/dialog/authorize', oauth2.authorization);
     app.post('/dialog/authorize/decision', oauth2.decision);
     app.post('/oauth/token', oauth2.token);
+
+    app.put('/api/enrollments', enrollments.edit);
 
     /**
      * User routes
