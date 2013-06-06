@@ -26,6 +26,7 @@
     "oauth2orize": "*",
     "passport-http-bearer": "*",
     "passport-http": "*",
-    "passport-oauth2-client-password": "*"
+    "passport-oauth2-client-password": "*",
+    "cluster": "*"
   }
 }
