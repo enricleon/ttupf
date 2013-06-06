@@ -86,7 +86,7 @@ server.grant(oauth2orize.grant.code(function(client, redirect_uri, user, ares, d
 
 server.exchange(oauth2orize.exchange.code(function(client, code, redirect_uri, done) {
     AuthorizationCode.findOne({code: code}).populate("client user").exec(function(err, authorization_code) {
-        if (err) { return done(err); }
+        if (err || !authorization_code) { return done(err); }
         if (client.client_id !== authorization_code.client.client_id) { return done(null, false); }
         if (redirect_uri !== authorization_code.redirect_uri) { return done(null, false); }
 
