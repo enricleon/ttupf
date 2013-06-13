@@ -41,6 +41,7 @@ module.exports = function (app, passport) {
      * User routes
      */
     restify.serve(app, UserModel, { middleware: [passport.authenticate('bearer', { session: false })]});
+    restify.serve(app, AccessToken, { middleware: [passport.authenticate('bearer', { session: false })]});
 
     /**
      * Timetable routes

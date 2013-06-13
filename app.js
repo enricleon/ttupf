@@ -3,25 +3,25 @@
  * Module dependencies.
  */
 
-var cluster = require('cluster');
+//var cluster = require('cluster');
 
-if (cluster.isMaster) {
-    var cpuCount = require('os').cpus().length;
+//if (cluster.isMaster) {
+//    var cpuCount = require('os').cpus().length;
 
     // Create a worker for each CPU
-    for (var i = 0; i < cpuCount; i += 1) {
-        cluster.fork();
-    }
+//    for (var i = 0; i < cpuCount; i += 1) {
+//        cluster.fork();
+//    }
 
-    cluster.on('exit', function (worker) {
+/*    cluster.on('exit', function (worker) {
 
         // Replace the dead worker, we're not sentimental
         console.log('Worker ' + worker.id + ' died :(');
         cluster.fork();
 
-    });
-}
-else {
+    });*/
+//}
+//else {
     var express = require('express'),
         mongoose = require('mongoose'),
         http = require('http'),
@@ -151,4 +151,4 @@ else {
     http.createServer(app).listen(app.get('port'), function(){
       console.log("Express server listening on port " + app.get('port'));
     });
-}
+//}
