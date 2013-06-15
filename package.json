@@ -2,10 +2,6 @@
   "name": "ttupf",
   "version": "0.0.1",
   "private": true,
-  "scripts": {
-    "install-windows-service": "winser -i",
-    "uninstall-windows-service": "winser -r"
-  },
   "dependencies": {
     "express": "3.1.0",
 	"htmltidy": "*",
@@ -23,7 +19,7 @@
     "node-html-encoder": "*",
     "distance": "*",
     "async": "*",
-    "express-restify-mongoose": "*",
+    "express-restify-mongoose": "git://github.com/nothingbuttumbleweed/express-restify-mongoose.git",
     "oauth2orize": "*",
     "passport-http-bearer": "*",
     "passport-http": "*",
