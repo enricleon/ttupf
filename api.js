@@ -21,10 +21,11 @@ var enrollments = require('./api/enrollments');
 
 var AccessToken = require('./models/AccessToken');
 
+var ScopeProvider = require('./providers/ScopeProvider');
+
 /**
  * Routes
  */
-
 
 module.exports = function (app, passport) {
 
@@ -40,8 +41,14 @@ module.exports = function (app, passport) {
     /**
      * User routes
      */
-    restify.serve(app, UserModel, { middleware: [passport.authenticate('bearer', { session: false })]});
-    restify.serve(app, AccessToken, { middleware: [passport.authenticate('bearer', { session: false })]});
+    restify.serve(app, UserModel, { middleware: [passport.authenticate('bearer', { session: false }), function(req, res, next) {
+        ScopeProvider.RestrictScope(req.authInfo.scope, req.query, UserModel, req.user);
+        next();
+    }]});
+    restify.serve(app, AccessToken, { middleware: [passport.authenticate('bearer', { session: false }), function(req, res, next) {
+        ScopeProvider.RestrictScope(req.authInfo.scope, req.query, AccessToken, req.user);
+        next();
+    }]});
 
     /**
      * Timetable routes
@@ -51,7 +58,10 @@ module.exports = function (app, passport) {
     /**
      * Enrollment routes
      */
-    restify.serve(app, EnrollmentModel);
+    restify.serve(app, EnrollmentModel, { middleware: [passport.authenticate('bearer', { session: false }), function(req, res, next) {
+        ScopeProvider.RestrictScope(req.authInfo.scope, req.query, EnrollmentModel, req.user);
+        next();
+    }]});
 
     /**
      * Subjects routes
