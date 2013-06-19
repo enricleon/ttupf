@@ -14,12 +14,7 @@ html
                 .container
                     a.brand(href="/index") TTUPF
                     ul.nav
-                        if (typeof(user) == 'undefined')
-                            li
-                                a(href="/users/new") Registra't
-                            li
-                                a(href="/login") Inicia sessió
-                        else
+                        if (typeof(user) != 'undefined')
                             li
                                 a(href="/logout") Tanca sessió
                             li
