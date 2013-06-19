@@ -14,7 +14,7 @@ exports.DistanceDictionary = function(name, names_array, callback) {
         Subject.find({}).exec(function(err, subjects) {
             if(!err && subjects) {
                 subjects.forEach(function(subject) {
-                    distance_dictionary.push({name: subject.name, distance: distance.levenshtein(subject.name, name)});
+                    distance_dictionary.push({name: subject.name, distance: distance.levenshtein(subject.name, name), id: subject._id});
                 });
 
                 callback(distance_dictionary);
@@ -32,16 +32,17 @@ exports.LowerDistance = function(distance_dictionary) {
     }
 
     var lower_distance = distance_dictionary[0].distance;
-    var current_match = distance_dictionary[0].name;
+    var current_match = distance_dictionary[0];
 
     distance_dictionary.forEach(function(subject) {
         if(subject.distance < lower_distance) {
             lower_distance = subject.distance;
-            current_match = subject.name;
+            current_match = subject;
+
         }
     });
 
-    return {distance: lower_distance, name: current_match};
+    return {distance: lower_distance, name: current_match.name, id: current_match.id};
 };
 
 var AccentsTidy = function(s){

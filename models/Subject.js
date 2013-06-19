@@ -14,7 +14,7 @@ var Subject = new Schema({
     code:       {type: [String]},
     name:       {type: String, required: true, unique: true, index: true},
     course:     {type: ObjectId, ref: 'Course', required: true},
-    sessions:   {type: [ObjectId], ref: 'Session'}
+    sessions:   [{type: ObjectId, ref: 'Session'}]
 });
 
 var Subject = mongoose.model('Subject', Subject);

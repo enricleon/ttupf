@@ -139,12 +139,16 @@ SessionsProvider.prototype.FillSubject = function(currentBlock) {
                             if(err){
                                 console.log(err);
                             }
-                            else if(saveGrade){
-                                Grade.findOneAndUpdate(grade,{$addToSet: {subjects: subject_doc}},{ upsert: true }, function(err, doc_grade){
-                                    if(err){
-                                        console.log(err);
-                                    }
-                                });
+                            else {
+                                session_doc.subject = lower_distance.id;
+                                session_doc.save();
+                                if(saveGrade){
+                                    Grade.findOneAndUpdate(grade,{$addToSet: {subjects: subject_doc}},{ upsert: true }, function(err, doc_grade){
+                                        if(err){
+                                            console.log(err);
+                                        }
+                                    });
+                                }
                             }
                         });
                     });

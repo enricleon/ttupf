@@ -116,6 +116,8 @@ module.exports = function (app) {
         sessionsProvider.ParseBlock(blockToTest);
     })
 
+    app.get('/subjects/update', subjects.update);
+
     /**
      * Timetable routes
      */

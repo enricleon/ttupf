@@ -12,7 +12,7 @@ var Schema = mongoose.Schema, ObjectId = Schema.ObjectId;
 var Grade = new Schema({
     name:        {type: String, required: true},
     code:       {type: String, required: true, unique: true},
-    subjects: {type: [ObjectId], ref: 'Subject'}
+    subjects: [{type: ObjectId, ref: 'Subject'}]
 });
 
 var Grade = mongoose.model('Grade', Grade);

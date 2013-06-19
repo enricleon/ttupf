@@ -19,7 +19,7 @@
     "node-html-encoder": "*",
     "distance": "*",
     "async": "*",
-    "express-restify-mongoose": "git://github.com/nothingbuttumbleweed/express-restify-mongoose.git",
+    "express-restify-mongoose": "*",
     "oauth2orize": "*",
     "passport-http-bearer": "*",
     "passport-http": "*",

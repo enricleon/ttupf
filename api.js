@@ -37,6 +37,10 @@ module.exports = function (app, passport) {
     app.post('/oauth/token', oauth2.token);
 
     app.put('/api/enrollments', enrollments.edit);
+    app.post('/api/login', passport.authenticate('local'),
+        function(req, res) {
+            res.send({success: true});
+    });
 
     /**
      * User routes

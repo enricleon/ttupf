@@ -10,11 +10,12 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema, ObjectId = Schema.ObjectId;
 
 var Session = new Schema({
+    subject:            {type: ObjectId, ref: 'Subject', required: true},
     type:               {type: String},
     group:              {type: String},
     classroom:          {type: String},
     timestamp_start:    {type: Date, required: true},
-    timestamp_end:      {type: Date, required: true},
+    timestamp_end:      {type: Date},
     comment:            {type: String}
 });
 
