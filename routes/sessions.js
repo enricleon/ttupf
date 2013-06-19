@@ -57,7 +57,7 @@ exports.show = function(req, res){
                     var dateA = new Date(a.timestamp_start);
                     var dateB = new Date(b.timestamp_start);
                     return dateA > dateB;
-                })
+                });
                 res.render('sessions/index', {title: "Horari", user: req.user, date: target_day, sessions: sessions});
             });
         }
