@@ -9,6 +9,7 @@
 var Session = require("../models/Session");
 var date = require('../public/js/date');
 var EspaiAulaProvider = require('../providers/EspaiAulaProvider');
+var Enrollment = require('../models/Enrollment');
 
 /*
  * GET This renders the timetable index
@@ -41,6 +42,19 @@ exports.GetSessionsByDate = function(req, res){
         }
     });
 };
+
+exports.GetSessionsByUserForDate = function(req, res) {
+    var target_day = date.parse('today');
+
+    if(req.params.day && req.params.month && req.params.year) {
+        target_day = date.parse(req.params.day + "/" + req.params.month + "/" + req.params.year);
+    }
+    var user = req.user;
+
+    Enrollment.GetSessionsByUserForDate(user, target_day, null, function(err, sessions) {
+        res.send(sessions);
+    });
+}
 
 exports.Config = function(req, res){
     var unis = req.body.unis;
