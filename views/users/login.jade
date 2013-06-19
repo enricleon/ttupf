@@ -1,14 +1,15 @@
 extends ../layout
 
 block content
-    h2 Inicia sessió
+    div(class='formPanel')
+        h2 Inicia sessió
 
-    form(action="/login", method="post")
-        div
-            label Nom d'usuari
-            input(type="text", name="username")
-        div
-            label Contrasenya
-            input(type="password", name="password")
-        div
-            input.btn.btn-primary(type="submit", value="Log In")
+        form(action="/login", method="post")
+            div
+                label Nom d'usuari
+                input(type="text", name="username")
+            div
+                label Contrasenya
+                input(type="password", name="password")
+            div
+                input.btn.btn-primary(type="submit", value="Log In")
