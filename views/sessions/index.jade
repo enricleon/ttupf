@@ -1,7 +1,7 @@
 extends ../layout
 
 block content
-    h1= title
+    h1(class='mainContent')= title
     if (user)
         p(style="text-transform: capitalize; font-weight: bold;") #{date.toString("dddd")} #{date.toString("d/M/yyyy")}
         ul.pager

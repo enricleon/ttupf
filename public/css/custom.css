@@ -31,7 +31,8 @@ body {
     float:left;
     margin-left:60px;
     background-color: rgba(200,200,200,0.2);
-    padding: 10px;
+    padding: 10px 30px;
+    margin-top: 20px;
     border-radius:5px;
     box-shadow: inset 0px 0px 1px 1px rgba(100, 100, 100, 0.2);
 }
@@ -53,5 +54,13 @@ body {
     font-size: 12px;
     line-height: 12px;
     display: inline;
+}
+.mainContent{
+    margin-top: 37px;
+}
+.mainPage{
+    width:50%;
+    float:left;
+    text-align:justify;
 }
 
