@@ -18,7 +18,7 @@ var SessionModel = require('./models/Session'),
     GradeCourseModel = require('./models/GradeCourse.js');
 
 var enrollments = require('./api/enrollments');
-
+var sessions = require('./api/sessions');
 var AccessToken = require('./models/AccessToken');
 
 var ScopeProvider = require('./providers/ScopeProvider');
@@ -57,7 +57,8 @@ module.exports = function (app, passport) {
     /**
      * Timetable routes
      */
-    restify.serve(app, SessionModel);
+    app.get('/api/v1/sessions/:day/:month/:year', passport.authenticate('bearer', { session: true }), sessions.GetSessionsByUserForDate);
+    app.get('/api/v1/sessions', passport.authenticate('bearer', { session: true }), sessions.GetSessionsByUserForDate);
 
     /**
      * Enrollment routes
