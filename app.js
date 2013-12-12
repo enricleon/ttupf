@@ -136,7 +136,7 @@
 //    var uristring = 'mongodb://admintest:L_1i2o9n2@ds045938.mongolab.com:45938' || process.env.MONGOLAB_URI || 'localhost:27017';
 
     // Connect mongoose
-    mongoose.connect('mongodb://ttupf_mongolab:jrk9COwiCclsEfzjkVGZtTljhwa6_wH8.XzFyprfYtE-@ds027748.mongolab.com:27748/ttupf_mongolab');
+    mongoose.connect('mongodb://ttupf_mongolab:L_1i2o9n2@ds027748.mongolab.com:27748/ttupf_mongolab');
 //    mongoose.connect('localhost:27017/ttupf');
 
     // Setup routes
