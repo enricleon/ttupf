@@ -27,4 +27,7 @@
     "cluster": "*",
     "winser": "*"
   }
+  "scripts": {
+    "start": "node app.js"
+  }
 }
