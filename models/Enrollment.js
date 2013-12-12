@@ -32,7 +32,7 @@ Enrollment.statics.GetSessionsByUserForDate = function(user, target_d, num_days,
             callback("No hi ha assignatures configurades.", null);
         }
         docs.forEach(function(enrollment) {
-            Session.findOne({_id: {$in: enrollment.subject.sessions}, timestamp_start: {$gte: target_d, $lt: next_d}, group: {$in: [enrollment.theory_group, enrollment.practicum_group, enrollment.seminar_group]}}).exec(function(err, doc) {
+            Session.findOne({_id: {$in: enrollment.subject.sessions}, timestamp_start: {$gte: target_d, $lt: next_d}, group: {$in: [enrollment.theory_group || "", enrollment.practicum_group || "", enrollment.seminar_group || ""]}}).exec(function(err, doc) {
                 if(!err && doc) {
                     //if(doc.group == enrollment.theory_group || doc.group == enrollment.practicum_group || doc.group == enrollment.seminar_group) {
                     var session = doc.toObject();

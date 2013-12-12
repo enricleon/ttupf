@@ -7,10 +7,8 @@
  */
 var request = require('request');
 var dom = require('xmldom').DOMParser;
-var tidy = require('htmltidy').tidy;
 var xpath = require('xpath');
 
-var Encoder = require('node-html-encoder').Encoder;
 var NameDistanceProvider = require('./NameDistanceProvider');
 
 var Grade = require('../models/Grade');
@@ -20,57 +18,64 @@ var SubjectsProvider = module.exports = function() {
     this.subjects = {};
 };
 
+function html2xhtml(post_data, callback){
+    var request = require('request');
+    request.post({
+        headers: {'content-type' : 'text/html'},
+        url:     'http://www.it.uc3m.es/jaf/cgi-bin/html2xhtml.cgi',
+        body:    post_data
+    }, function(error, response, body){
+        callback(error, body);
+    });
+}
+
 SubjectsProvider.prototype.UpdateSubjectsProgram = function(program, grade_code) {
     var me = this;
-    tidy(program, function(err, res){
-        if(!err){
-            var program_dom = new dom().parseFromString(res);
-            var subjects = xpath.select("//html/body//descendant::div[@id='contenido']/descendant::ul//li[@class='sumari']", program_dom);
 
-            subjects.forEach(function (item, index){
-                var subject_item = new dom().parseFromString(item.toString());
+    html2xhtml(program, function(error, res) {
+        var program_dom = new dom().parseFromString(res);
+        var subjects = xpath.select("//html/body//descendant::div[@id='contenido']/descendant::ul//li[@class='sumari']", program_dom);
 
-                var dirty_code = xpath.select('/li/a/text()', subject_item);
-                var dirty_name = xpath.select('/li/text()', subject_item);
+        subjects.forEach(function (item, index){
+            var subject_item = new dom().parseFromString(item.toString());
 
-                // entity type trim
-                var subject_name = dirty_name.toString().replace("&nbsp;","").replace("&amp;","").replace("nbsp;", "").replace("amp;", "").replace("\r\n", " ");
-                var subject_code = dirty_code.toString();
+            var dirty_code = xpath.select('/li/a/text()', subject_item);
+            var dirty_name = xpath.select('/li/text()', subject_item);
 
-                var distance_dictionary = NameDistanceProvider.DistanceDictionary(subject_name, me.subjects);
-                var lower_distance = NameDistanceProvider.LowerDistance(distance_dictionary);
-                var name = subject_name;
+            // entity type trim
+            var subject_name = dirty_name.toString().replace(/\n[\s]*/gm,' ').replace(",","").replace("&nbsp;","").replace("&amp;","").replace("nbsp;", "").replace("amp;", "");
+            var subject_code = dirty_code.toString();
 
-                if(lower_distance.distance != -1 && lower_distance.distance <= 2) {
-                    name = lower_distance.name;
-                }
+            var distance_dictionary = NameDistanceProvider.DistanceDictionary(subject_name, me.subjects);
+            var lower_distance = NameDistanceProvider.LowerDistance(distance_dictionary);
+            var name = subject_name;
 
-                if(me.subjects[name]) {
-                    me.subjects[name].code.push(subject_code);
-                }
-                else {
-                    me.subjects[name] = {code: [subject_code]}
+            if(lower_distance.distance != -1 && lower_distance.distance <= 2) {
+                name = lower_distance.name;
+            }
+
+            if(me.subjects[name]) {
+                me.subjects[name].code.push(subject_code);
+            }
+            else {
+                me.subjects[name] = {code: [subject_code]}
+            }
+        });
+
+        Object.keys(me.subjects).forEach(function(name) {
+            var subject = me.subjects[name];
+            var Subject = require('../models/Subject');
+            Subject.findOneAndUpdate({name: name}, {$addToSet: {code: { $each:  subject.code}}}, {upsert: true}, function(err, doc) {
+                if(!err && doc) {
+                    console.log("Assignatura guardada correctament");
+                    Grade.findOneAndUpdate({code: grade_code},{$addToSet: {subjects: doc}},{ upsert: true }, function(err, grade){
+                        if(err){
+                            console.log(err);
+                        }
+                    });
                 }
             });
-
-            Object.keys(me.subjects).forEach(function(name) {
-                var subject = me.subjects[name];
-                var Subject = require('../models/Subject');
-                Subject.findOneAndUpdate({name: name}, {$addToSet: {code: { $each:  subject.code}}}, {upsert: true}, function(err, doc) {
-                    if(!err && doc) {
-                        console.log("Assignatura guardada correctament");
-                        Grade.findOneAndUpdate({code: grade_code},{$addToSet: {subjects: doc}},{ upsert: true }, function(err, grade){
-                            if(err){
-                                console.log(err);
-                            }
-                        });
-                    }
-                });
-            });
-
-        } else{
-            console.log(err);
-        }
+        });
     });
 };
 

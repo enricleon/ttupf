@@ -23,7 +23,8 @@ block content
                 each session in sessions
                     tbody
                         tr
-                            td= session.timestamp_start.toString("HH:mm")
+                            td
+                                | #{session.timestamp_start.getUTCHours()}:#{session.timestamp_start.getUTCMinutes()}
                             td= session.subject
                             td= session.type
                             td= session.classroom

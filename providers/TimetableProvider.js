@@ -29,7 +29,7 @@ exports.ParseGradeCourse = function(body) {
     var doc = new dom().parseFromString(xml);
 
     //Agafem les setmanes del dom
-    var nodes = xpath.select("//html/body//a/table/tbody", doc);
+    var nodes = xpath.select("/html/body//table/tbody", doc);
 
     nodes.forEach(parseWeek);
 }

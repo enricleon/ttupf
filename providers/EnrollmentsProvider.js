@@ -1,6 +1,5 @@
 var xpath = require('xpath'),
     dom = require('xmldom').DOMParser,
-    tidy = require('htmltidy').tidy,
     async = require('async');
 
 var User = require('../models/User');
@@ -25,9 +24,20 @@ var states = {
     HAVE_GROUP: 2
 }
 
+function html2xhtml(post_data, callback){
+    var request = require('request');
+    request.post({
+        headers: {'content-type' : 'text/html'},
+        url:     'http://www.it.uc3m.es/jaf/cgi-bin/html2xhtml.cgi',
+        body:    post_data
+    }, function(error, response, body){
+        callback(error, body);
+    });
+}
+
 EnrollmentsProvider.prototype.Start = function(espaiaula) {
     var me = this;
-    tidy(espaiaula, function(err, html) {
+    html2xhtml(espaiaula, function(err, html) {
         if(err)
         {
             throw err;

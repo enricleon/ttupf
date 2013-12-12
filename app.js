@@ -133,8 +133,11 @@
     passport.serializeUser(User.serializeUser());
     passport.deserializeUser(User.deserializeUser());
 
+//    var uristring = 'mongodb://admintest:L_1i2o9n2@ds045938.mongolab.com:45938' || process.env.MONGOLAB_URI || 'localhost:27017';
+
     // Connect mongoose
-    mongoose.connect('localhost', 'ttupf');
+    mongoose.connect('mongodb://ttupfadmin:L_1i2o9n2@ds045938.mongolab.com:45938/heroku_app18151910');
+//    mongoose.connect('localhost:27017/ttupf');
 
     // Setup routes
     require('./routes')(app);
