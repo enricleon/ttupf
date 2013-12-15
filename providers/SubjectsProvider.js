@@ -29,6 +29,16 @@ function html2xhtml(post_data, callback){
     });
 }
 
+SubjectsProvider.prototype.CleanLine = function(line) {
+    var content = line.toString();
+    content = content.replace(/(^\s*)|(\s*$)/gi,"");
+    content = content.replace(/[ ]{2,}/gi," ");
+    content = content.replace(/\n /,"\n");
+    content = content.replace(/\n/,"");
+
+    return content;
+}
+
 SubjectsProvider.prototype.UpdateSubjectsProgram = function(program, grade_code) {
     var me = this;
 
@@ -43,7 +53,7 @@ SubjectsProvider.prototype.UpdateSubjectsProgram = function(program, grade_code)
             var dirty_name = xpath.select('/li/text()', subject_item);
 
             // entity type trim
-            var subject_name = dirty_name.toString().replace(/\n[\s]*/gm,' ').replace(",","").replace("&nbsp;","").replace("&amp;","").replace("nbsp;", "").replace("amp;", "");
+            var subject_name = me.CleanLine(dirty_name.toString().replace(/\n[\s]*/gm,' ').replace(",","").replace("&nbsp;","").replace("&amp;","").replace("nbsp;", "").replace("amp;", ""));
             var subject_code = dirty_code.toString();
 
             var distance_dictionary = NameDistanceProvider.DistanceDictionary(subject_name, me.subjects);

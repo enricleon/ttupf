@@ -104,6 +104,13 @@
             <timetable_url>http://www.upf.edu/esup/docencia/horaris1314/horaris_1314_GEI_C3_T1_G1.html</timetable_url>
             <theory_group>1</theory_group>
         </course_grade>
+		<course_grade>
+            <course>3</course>
+            <grade>1</grade>
+            <period>1</period>
+            <timetable_url>http://www.upf.edu/esup/docencia/horaris1314/horaris_1314_GEI_C3_T1_G2.html</timetable_url>
+            <theory_group>2</theory_group>
+        </course_grade>
         <course_grade>
             <course>4</course>
             <grade>1</grade>
@@ -145,6 +152,13 @@
             <period>1</period>
             <timetable_url>http://www.upf.edu/esup/docencia/horaris1314/horaris_1314_GET_C3_T1_G1.html</timetable_url>
             <theory_group>1</theory_group>
+        </course_grade>
+		<course_grade>
+            <course>3</course>
+            <grade>2</grade>
+            <period>1</period>
+            <timetable_url>http://www.upf.edu/esup/docencia/horaris1314/horaris_1314_GET_C3_T1_G2.html</timetable_url>
+            <theory_group>2</theory_group>
         </course_grade>
         <course_grade>
             <course>4</course>
@@ -188,6 +202,13 @@
             <timetable_url>http://www.upf.edu/esup/docencia/horaris1314/horaris_1314_GES_C3_T1_G1.html</timetable_url>
             <theory_group>1</theory_group>
         </course_grade>
+		<course_grade>
+            <course>3</course>
+            <grade>3</grade>
+            <period>1</period>
+            <timetable_url>http://www.upf.edu/esup/docencia/horaris1314/horaris_1314_GES_C3_T2_G1.html</timetable_url>
+            <theory_group>2</theory_group>
+        </course_grade>
         <course_grade>
             <course>4</course>
             <grade>3</grade>
@@ -199,7 +220,119 @@
             <course>5</course>
             <grade>1</grade>
             <period>1</period>
-            <timetable_url>http://www.upf.edu/esup/docencia/horaris1314/horaris_1314_OPT_C1_T1_G1_nou.html</timetable_url>
+            <timetable_url>http://www.upf.edu/esup/docencia/horaris1314/horaris_1314_OPT_C1_T1_G1.html</timetable_url>
+            <theory_group>1</theory_group>
+        </course_grade>
+		<course_grade>
+            <course>1</course>
+            <grade>1</grade>
+            <period>2</period>
+            <timetable_url>http://www.upf.edu/esup/docencia/horaris1314/horaris_1314_GEI_C1_T2_G1.html</timetable_url>
+            <theory_group>1</theory_group>
+        </course_grade>
+        <course_grade>
+            <course>1</course>
+            <grade>1</grade>
+            <period>2</period>
+            <timetable_url>http://www.upf.edu/esup/docencia/horaris1314/horaris_1314_GEI_C1_T2_G2.html</timetable_url>
+            <theory_group>2</theory_group>
+        </course_grade>
+        <course_grade>
+            <course>2</course>
+            <grade>1</grade>
+            <period>2</period>
+            <timetable_url>http://www.upf.edu/esup/docencia/horaris1314/horaris_1314_GEI_C2_T2_G1.html</timetable_url>
+            <theory_group>1</theory_group>
+        </course_grade>
+        <course_grade>
+            <course>2</course>
+            <grade>1</grade>
+            <period>2</period>
+            <timetable_url>http://www.upf.edu/esup/docencia/horaris1314/horaris_1314_GEI_C2_T2_G2.html</timetable_url>
+            <theory_group>2</theory_group>
+        </course_grade>
+        <course_grade>
+            <course>3</course>
+            <grade>1</grade>
+            <period>2</period>
+            <timetable_url>http://www.upf.edu/esup/docencia/horaris1314/horaris_1314_GEI_C3_T2_G1.html</timetable_url>
+            <theory_group>1</theory_group>
+        </course_grade>
+        <course_grade>
+            <course>1</course>
+            <grade>2</grade>
+            <period>2</period>
+            <timetable_url>http://www.upf.edu/esup/docencia/horaris1314/horaris_1314_GET_C1_T2_G1.html</timetable_url>
+            <theory_group>1</theory_group>
+        </course_grade>
+        <course_grade>
+            <course>1</course>
+            <grade>2</grade>
+            <period>2</period>
+            <timetable_url>http://www.upf.edu/esup/docencia/horaris1314/horaris_1314_GET_C1_T2_G2.html</timetable_url>
+            <theory_group>2</theory_group>
+        </course_grade>
+        <course_grade>
+            <course>2</course>
+            <grade>2</grade>
+            <period>2</period>
+            <timetable_url>http://www.upf.edu/esup/docencia/horaris1314/horaris_1314_GET_C2_T2_G1.html</timetable_url>
+            <theory_group>1</theory_group>
+        </course_grade>
+        <course_grade>
+            <course>2</course>
+            <grade>2</grade>
+            <period>2</period>
+            <timetable_url>http://www.upf.edu/esup/docencia/horaris1314/horaris_1314_GET_C2_T2_G2.html</timetable_url>
+            <theory_group>2</theory_group>
+        </course_grade>
+        <course_grade>
+            <course>3</course>
+            <grade>2</grade>
+            <period>2</period>
+            <timetable_url>http://www.upf.edu/esup/docencia/horaris1314/horaris_1314_GET_C3_T2_G1.html</timetable_url>
+            <theory_group>1</theory_group>
+        </course_grade>
+        <course_grade>
+            <course>1</course>
+            <grade>3</grade>
+            <period>2</period>
+            <timetable_url>http://www.upf.edu/esup/docencia/horaris1314/horaris_1314_GES_C1_T2_G1.html</timetable_url>
+            <theory_group>1</theory_group>
+        </course_grade>
+        <course_grade>
+            <course>1</course>
+            <grade>3</grade>
+            <period>2</period>
+            <timetable_url>http://www.upf.edu/esup/docencia/horaris1314/horaris_1314_GES_C1_T2_G2.html</timetable_url>
+            <theory_group>2</theory_group>
+        </course_grade>
+        <course_grade>
+            <course>2</course>
+            <grade>3</grade>
+            <period>2</period>
+            <timetable_url>http://www.upf.edu/esup/docencia/horaris1314/horaris_1314_GES_C2_T2_G1.html</timetable_url>
+            <theory_group>1</theory_group>
+        </course_grade>
+        <course_grade>
+            <course>2</course>
+            <grade>3</grade>
+            <period>2</period>
+            <timetable_url>http://www.upf.edu/esup/docencia/horaris1314/horaris_1314_GES_C2_T2_G2.html</timetable_url>
+            <theory_group>2</theory_group>
+        </course_grade>
+        <course_grade>
+            <course>3</course>
+            <grade>3</grade>
+            <period>2</period>
+            <timetable_url>http://www.upf.edu/esup/docencia/horaris1314/horaris_1314_GES_C3_T2_G1.html</timetable_url>
+            <theory_group>1</theory_group>
+        </course_grade>
+        <course_grade>
+            <course>5</course>
+            <grade>1</grade>
+            <period>2</period>
+            <timetable_url>http://www.upf.edu/esup/docencia/horaris1314/horaris_1314_OPT_C1_T2_G1.html</timetable_url>
             <theory_group>1</theory_group>
         </course_grade>
     </course_grades>
