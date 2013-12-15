@@ -26,6 +26,8 @@ EspaiAulaProvider.prototype.SynchroniseUPFProfile = function(username, password,
 
 EspaiAulaProvider.prototype.LoginCampusGlobal = function(callback) {
     var me = this;
+    console.log("User: ", me.username);
+    console.log("Password: ", me.password);
     request({
         uri: me.url_login_campusglobal,
         method: "post",
