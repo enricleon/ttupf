@@ -19,6 +19,7 @@ EspaiAulaProvider.prototype.SynchroniseUPFProfile = function(username, password,
 
     this.LoginCampusGlobal(function(espaiaula) {
         var enrollmentsProvider = new EnrollmentsProvider(me.user, callback);
+        console.log(espaiaula);
         enrollmentsProvider.Start(espaiaula);
     });
 };
