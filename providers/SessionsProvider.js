@@ -20,6 +20,8 @@ var States = {
     HAVE_HOUR : 2,
     HAVE_TYPE : 3,
     HAVE_SUBJECT : 4,
+    HAVE_COMMENT : 5,
+    HAVE_SEPARATOR : 5,
     END : -1
 }
 
@@ -103,6 +105,13 @@ SessionsProvider.prototype.FillType = function(currentBlock) {
     return;
 };
 
+SessionsProvider.prototype.FillComment = function(currentBlock) {
+    //Tenim algo de comment
+    currentBlock.SetPropertyToAll("comment", this.lastLine);
+
+    return;
+};
+
 SessionsProvider.prototype.FillSubject = function(currentBlock) {
     // Whe have now the subject's name.
     var subject_name = this.lastLine;
@@ -110,8 +119,10 @@ SessionsProvider.prototype.FillSubject = function(currentBlock) {
     currentBlock.SetPropertyToAll("timestamp_start", currentBlock.data.toUTCString());
 
     if(currentBlock.Finish) {
-        currentBlock.SetPropertyToAll("subject", subject_name);
-        currentBlock.Finish(null, currentBlock);
+        currentBlock.SetPropertyToAll("subject_name", subject_name);
+        if(currentBlock.currentLine == currentBlock.lines.length - 1) {
+            currentBlock.Finish(null, currentBlock);
+        }
     }
     else {
         var course = this.gradeCourse.course;
@@ -163,11 +174,12 @@ SessionsProvider.prototype.FillSubject = function(currentBlock) {
     this.currentState = States.INITIAL;
 };
 
-SessionsProvider.prototype.LineType = function(line) {
+SessionsProvider.prototype.LineType = function(line, nextLine) {
     var has_type = new RegExp("[ÀÁÈÉÍÏÒÓÚÜÑA-Z]{4,}"); // If line has at least 1 uppercase word is type => 0
     var has_classroom = new RegExp("([0-9]{2}.[A-Za-z0-9][0-9]{2})"); // If line is like PXXX: XX.XXX or SXXX: XX.XXX or SXXX - XX.XXX is aulagrup => 1
     var has_subject = new RegExp("^((?:(?:[ÀÁÇÈÉÍÏÒÓÚÜÑA-Z]?[àáçèéíïòóúüña-z\\'\\s\\.\\-·]+)+)+[ÀÁÈÉÍÏÒÓÚÜÑA-Z0-9\\s]*)$"); // This regex is a miracle understandable. Sorry xD NO FUNCIONA DEL TOT, de moment detecta l'subject bé però només pot contenir una paraula en majuscula i al final.
     var has_hour = new RegExp("([0-2]?[0-9][:|.][0-5][0-9])(?![0-9])"); // If line matches at least one hour XX:XX hora =>3
+    var has_separator = new RegExp("[\\s|-]{4,}"); // If line matches at least one hour XX:XX hora =>3
 
     var result = line.match(has_type);
     if (result) {
@@ -179,9 +191,31 @@ SessionsProvider.prototype.LineType = function(line) {
         return States.HAVE_SESSION;
     }
 
+    result = line.match(has_separator);
+    if (result) {
+        return States.HAVE_SEPARATOR;
+    }
+
     result = line.match(has_subject);
     if (result) {
-        return States.HAVE_SUBJECT;
+        if(nextLine) {
+            switch(this.LineType(nextLine)) {
+                case States.HAVE_SUBJECT:
+                case States.HAVE_TYPE:
+                case States.HAVE_HOUR:
+                {
+                    return States.HAVE_COMMENT;
+                }
+                    break;
+                default: {
+                    return States.HAVE_SUBJECT;
+                }
+                    break;
+            }
+        }
+        else {
+            return States.HAVE_SUBJECT;
+        }
     }
 
     result = line.match(has_hour);
@@ -200,6 +234,9 @@ SessionsProvider.prototype.ProcessState = function(currentBlock) {
         case States.HAVE_TYPE:
             this.FillType(currentBlock);
             break;
+        case States.HAVE_COMMENT:
+            this.FillComment(currentBlock);
+            break;
         case States.HAVE_HOUR:
             this.FillHour(currentBlock);
             break;
@@ -212,7 +249,8 @@ SessionsProvider.prototype.ProcessState = function(currentBlock) {
 }
 
 SessionsProvider.prototype.StateMachine = function(line, currentBlock) {
-    var lineType = this.LineType(line);
+    var nextLine = currentBlock.currentLine + 1 < currentBlock.lines.length ? this.CleanLine(currentBlock.lines[currentBlock.currentLine + 1]) : undefined;
+    var lineType = this.LineType(line, nextLine);
     this.lastLine = line;
 
     switch(this.currentState) {
@@ -241,6 +279,9 @@ SessionsProvider.prototype.StateMachine = function(line, currentBlock) {
                 case States.HAVE_SUBJECT:
                     this.currentState = States.HAVE_SUBJECT;
                     break;
+                case States.HAVE_COMMENT:
+                    this.currentState = States.HAVE_COMMENT;
+                    break;
                 default:
                     console.log("FALLO: " + currentBlock.data.toString())
                     this.currentState = States.END;
@@ -254,6 +295,9 @@ SessionsProvider.prototype.StateMachine = function(line, currentBlock) {
                     break;
                 case States.HAVE_TYPE:
                     this.currentState = States.HAVE_TYPE;
+                    break;
+                case States.HAVE_COMMENT:
+                    this.currentState = States.HAVE_COMMENT;
                     break;
                 default:
                     this.currentState = States.END;
@@ -273,6 +317,22 @@ SessionsProvider.prototype.StateMachine = function(line, currentBlock) {
                     break;
             }
             break;
+        case States.HAVE_COMMENT:
+            switch(lineType) {
+                case States.HAVE_TYPE:
+                    this.currentState = States.HAVE_TYPE;
+                    break;
+                case States.HAVE_SUBJECT:
+                    this.currentState = States.HAVE_SUBJECT;
+                    break;
+                case States.HAVE_HOUR:
+                    this.currentState = States.HAVE_HOUR;
+                    break;
+                default:
+                    this.currentState = States.END;
+                    break;
+            }
+            break;
         case States.HAVE_SUBJECT:
             console.log("Block ended!");
             break;
@@ -282,32 +342,57 @@ SessionsProvider.prototype.StateMachine = function(line, currentBlock) {
     this.ProcessState(currentBlock);
 };
 
+SessionsProvider.prototype.CleanLine = function(line) {
+    var content = line.toString();
+    content = content.replace(/(^\s*)|(\s*$)/gi,"");
+    content = content.replace(/[ ]{2,}/gi," ");
+    content = content.replace(/\n /,"\n");
+    content = content.replace(/\n/,"");
+
+    return content;
+}
+
+SessionsProvider.prototype.CleanLines = function(lines, callback) {
+    var cleanLines = [];
+    var me = this;
+    lines.forEach(function(item, index) {
+        var line = me.CleanLine(item);
+        if(line != ""){
+            cleanLines.push(line);
+        }
+        if(index + 1 == lines.length) {
+            callback(cleanLines);
+        }
+    });
+}
+
 SessionsProvider.prototype.ParseBlock = function(currentBlock) {
     var doc = new dom().parseFromString(currentBlock.html.toString());
     var lines = xpath.select("//div/node()[name() != 'br']", doc);
 
     var self = this;
 
-    //Parsejem la sessió de l'última linia a la primera
-    lines.reverse().forEach(function(item, index) {
+    self.CleanLines(lines.reverse(), function(cleanLines) {
+        currentBlock.lines = cleanLines;
 
-        //Netejem la lína d'informació que no volem
-        var content = item.toString();
-        content = content.replace(/(^\s*)|(\s*$)/gi,"");
-        content = content.replace(/[ ]{2,}/gi," ");
-        content = content.replace(/\n /,"\n");
-        content = content.replace(/\n/,"");
+        //Parsejem la sessió de l'última linia a la primera
+        currentBlock.lines.forEach(function(item, index) {
+            currentBlock.currentLine = index;
 
-        if(content != null && content != "") {
-            //console.log(content);
+            //Netejem la lína d'informació que no volem
+            var content = self.CleanLine(item);
 
-            if(self.currentState != States.END) {
-                self.StateMachine(content, currentBlock);
+            if(content != null && content != "") {
+                //console.log(content);
+
+                if(self.currentState != States.END) {
+                    self.StateMachine(content, currentBlock);
+                }
+                else {
+                    console.log("End of parsing");
+                    self.currentState = States.INITIAL;
+                }
             }
-            else {
-                console.log("End of parsing");
-                self.currentState = States.INITIAL;
-            }
-        }
+        });
     });
 };

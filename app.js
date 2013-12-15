@@ -3,25 +3,6 @@
  * Module dependencies.
  */
 
-//var cluster = require('cluster');
-
-//if (cluster.isMaster) {
-//    var cpuCount = require('os').cpus().length;
-
-    // Create a worker for each CPU
-//    for (var i = 0; i < cpuCount; i += 1) {
-//        cluster.fork();
-//    }
-
-/*    cluster.on('exit', function (worker) {
-
-        // Replace the dead worker, we're not sentimental
-        console.log('Worker ' + worker.id + ' died :(');
-        cluster.fork();
-
-    });*/
-//}
-//else {
     var express = require('express'),
         mongoose = require('mongoose'),
         http = require('http'),
@@ -136,8 +117,8 @@
 //    var uristring = 'mongodb://admintest:L_1i2o9n2@ds045938.mongolab.com:45938' || process.env.MONGOLAB_URI || 'localhost:27017';
 
     // Connect mongoose
-    mongoose.connect('mongodb://ttupf_mongolab:L_1i2o9n2@ds027748.mongolab.com:27748/ttupf_mongolab');
-//    mongoose.connect('localhost:27017/ttupf');
+//    mongoose.connect('mongodb://ttupf_mongolab:L_1i2o9n2@ds027748.mongolab.com:27748/ttupf_mongolab');
+    mongoose.connect('localhost:27017/ttupf');
 
     // Setup routes
     require('./routes')(app);
@@ -155,4 +136,3 @@
     http.createServer(app).listen(app.get('port'), function(){
       console.log("Express server listening on port " + app.get('port'));
     });
-//}

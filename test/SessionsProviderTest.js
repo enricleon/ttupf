@@ -95,13 +95,46 @@ Vows.describe('Blocks').addBatch({
             Assert.equal(topic.sessions[0].type, "PRÀCTIQUES");
         },
         'the first session should belong to an assignatura named Administració de Sistemes Operatius': function(topic) {
-            Assert.equal(topic.sessions[0].subject, "Administració de Sistemes Operatius");
+            Assert.equal(topic.sessions[0].subject_name, "Administració de Sistemes Operatius");
         },
         'the second session should be a TEORIA session': function(topic) {
             Assert.equal(topic.sessions[1].type, "TEORIA");
         },
         'the second session should belong to an assignatura named Protocols Distribuïts': function(topic) {
-            Assert.equal(topic.sessions[1].subject, "Protocols Distribuïts");
+            Assert.equal(topic.sessions[1].subject_name, "Protocols Distribuïts");
+        }
+    },
+    'Block with custom type and comment': {
+        topic: function() {
+            var html = '<div align="center">Finances en Projectes Tecnològics<br><b>SEMINARI PROJECTES</b><br>Ascensor Intel·ligent<br>Aula: 52.329<br></div>';
+            var date = Date.parse("13/11/2013 16:30");
+
+            var blockToTest = new Block(html, date);
+
+            blockToTest.Finish = this.callback;
+
+            var get_c4_t1_g1 = new GradeCourse({
+                timetable_url: "http://www.upf.edu/esup/docencia/horaris1314/horaris_1314_GET_C4_T1_G1.html",
+                theory_group: "1",
+                grade: null,
+                period: null,
+                course: null
+            });
+
+            var sessionsProvider = new SessionsProvider(get_c4_t1_g1);
+            sessionsProvider.ParseBlock(blockToTest);
+        },
+        'should have one sessions': function(topic) {
+            Assert.equal(topic.sessions.length, 1);
+        },
+        'the session should be a SEMINARI PROJECTES session': function(topic) {
+            Assert.equal(topic.sessions[0].type, "SEMINARI PROJECTES");
+        },
+        'the session should belong to a subject named "Finances en Projectes Tecnològics"': function(topic) {
+            Assert.equal(topic.sessions[0].subject_name, "Finances en Projectes Tecnològics");
+        },
+        'the session should have the comment: "Ascensor Intel·ligent"': function(topic) {
+            Assert.equal(topic.sessions[0].comment, "Ascensor Intel·ligent");
         }
     }
 }).export(module); // Export the Suite
