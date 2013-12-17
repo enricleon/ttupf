@@ -1,5 +1,4 @@
-var request = require("request"),
-    xpath = require('xpath'),
+var request = require("request").defaults({jar: true}),
     dom = require('xmldom').DOMParser;
 
 var EnrollmentsProvider = require('./EnrollmentsProvider');
