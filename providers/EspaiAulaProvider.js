@@ -51,7 +51,6 @@ EspaiAulaProvider.prototype.GetCampusGlobal = function(callback) {
     console.log("Url: " + me.url_campusglobal);
     request({
         uri: me.url_campusglobal,
-        method: "get",
         followAllRedirects: true
     }, function(error, response, body) {
         console.log("Error: " + error);
