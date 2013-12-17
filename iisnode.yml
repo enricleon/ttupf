@@ -3,3 +3,18 @@
 
 loggingEnabled: true
 devErrorsEnabled: true
+debuggingEnabled: true
+
+# debuggerPortRange - range of TCP ports that can be used for communication between the node-inspector debugger and the debugee; iisnode
+# will round robin through this port range for subsequent debugging sessions and pick the next available (free) port to use from the range
+
+debuggerPortRange: 5858-5858
+
+# debuggerPathSegment - URL path segment used to access the built-in node-inspector debugger; given a node.js application at http://www.ttupf.com/app.js, the debugger can be accessed at http://foo.com/bar/baz.js/{debuggerPathSegment}, by default http://www.ttupf.com/app.js/debug
+
+debuggerPathSegment: debug
+
+# debugHeaderEnabled - boolean indicating whether iisnode should attach the iisnode-debug HTTP response header with 
+# diagnostics information to all responses
+
+debugHeaderEnabled: true
