@@ -26,8 +26,10 @@ EspaiAulaProvider.prototype.SynchroniseUPFProfile = function(username, password,
 
 EspaiAulaProvider.prototype.LoginCampusGlobal = function(callback) {
     var me = this;
-    console.log("User: ", me.username);
-    console.log("Password: ", me.password);
+    console.log("--------------LOGIN-------------");
+    console.log("User: " + me.username);
+    console.log("Password: " + me.password);
+    console.log("Url: " + me.url_login_campusglobal);
     request({
         uri: me.url_login_campusglobal,
         method: "post",
@@ -37,23 +39,33 @@ EspaiAulaProvider.prototype.LoginCampusGlobal = function(callback) {
             passwd: me.password
         }
     }, function(error, response, body) {
+        console.log("Error: " + error);
+        console.log("Response: " + response);
+        console.log("Body: " + body);
         me.GetCampusGlobal(callback);
     });
 };
 
 EspaiAulaProvider.prototype.GetCampusGlobal = function(callback) {
     var me = this;
+    console.log("--------------CAMPUS GLOBAL-------------");
+    console.log("Url: " + me.url_campusglobal);
     request({
         uri: me.url_campusglobal,
         method: "get",
         followAllRedirects: true
     }, function(error, response, body) {
+        console.log("Error: " + error);
+        console.log("Response: " + response);
+        console.log("Body: " + body);
         me.GetEspaiAula(callback);
     });
 };
 
 EspaiAulaProvider.prototype.GetEspaiAula = function(callback) {
     var me = this;
+    console.log("--------------ESPAI AULA-------------");
+    console.log("Url: " + me.url_espai_aula);
     request({
         uri: me.url_espai_aula,
         method: "post",
@@ -64,6 +76,9 @@ EspaiAulaProvider.prototype.GetEspaiAula = function(callback) {
             cg_opciomenu: "Espai Aula"
         }
     }, function(error, response, body) {
+        console.log("Error: " + error);
+        console.log("Response: " + response);
+        console.log("Body: " + body);
         callback(body);
     });
 };
