@@ -6,8 +6,8 @@
  * To change this template use File | Settings | File Templates.
  */
 $(document).ready(function() {
-    $(".profile_tab").click(function() {
-        $(this).parents(".nav-tabs").children("li").each(function() {
+    $(".profile_tab").click(function(e) {
+        $(this).parents(".nav-pills").children("li").each(function() {
             $(this).removeClass("active");
         });
         $(this).parents("li").attr("class", "active");

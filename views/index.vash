@@ -1,0 +1,32 @@
+@html.extend('layout', function(model){
+    @html.block('content', function(model){
+        <div class="row">
+            @{
+                if(typeof(model.user) == 'undefined') {
+                    <div class="col-md-5">
+                        <div class='form-signin-wrapper jumbotron'>
+                            <form class="form-signin" role="form" action="/login">
+                                <h2 class="form-signin-heading">Inicia sessió</h2>
+                                <input type="text" class="form-control" placeholder="Usuari" required="" autofocus="">
+                                <input type="password" class="form-control" placeholder="Contrassenya" required="">
+                                <label class="checkbox">
+                                    <input type="checkbox" value="remember-me"> Recorda'm
+                                </label>
+                                <button class="btn btn-lg btn-primary btn-block" type="submit">Entra</button>
+                            </form>
+                            <p>No tens compte? <a href='users/new'>Registrat aquí</a>
+                        </div>
+                    </div>
+                }
+            }
+            <div class="@(typeof(model.user) == 'undefined' ? 'col-md-7' : 'col-md-12')">
+                <div class="jumbotron">
+                    <h2>@model.title</h2>
+
+                    <p>Timetable UPF és un servei de personalització d'horaris per als estudiants de l'Escola Superior Politècnica de la Universitat Pompeu Fabra (UPF).</p>
+                    <p>Un cop et registris podràs configurar el teu horari amb les assignatures que estàs cursant (de diversos cursos inclús), indicant els grups de teoria, pràctiques i seminaris. Quan estigui tot configurat veuràs només les classes que et toquen a tu, ja siguin de teoria, de pràctiques o de seminaris.</p>
+                </div>
+            </div>
+        </div>
+    })
+})

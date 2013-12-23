@@ -5,56 +5,75 @@
 //   Time: 18:49
 //   To change this template use File | Settings | File Templates.
 
-extends ../layout
-
-block scripts
-    script(src='/js/enrollments.js')
-    script(src='/js/profile.js')
-
-block content
-    h1= title
-    if (user)
-        ul.nav.nav-tabs
-            if enrollments && enrollments.length > 0
-                li.active
-                    a.profile_tab#enrollments_tab Assignatures i grups
-                li
-                    a.profile_tab#espai_aula_tab Espai Aula
-            else
-                li.active
-                    a.profile_tab#espai_aula_tab Espai Aula
-
-        #espai_aula(style=enrollments && enrollments.length > 0 ? "display: none;" : "")
-            form(action="/users/config", method="post")
-                div
-                    h2 Configuració automàtica
-                    p Introdueix el teu usuari i contrasenya del Campus Global per configurar les teves assignatures i grups automàticament a partir de la informació que hi ha al teu Espai Aula. Tranquil, no guardem les teves dades ;)
-                div
-                    label Usuari
-                    input(type="text", name="unis", placeholder="u00000")
-                div
-                    label Contrasenya
-                    input(type="password", name="password", placeholder="Contrasenya del Campus Global")
-                div
-                    input.btn.btn-primary(type="submit", value="Configura les assignatures")
-
-        #enrollments(style=enrollments && enrollments.length > 0 ? "" : "display: none;")
-            if enrollments && enrollments.length > 0
-                p Edita les teves assignatures i els seus grups de pràctiques o seminari
-                table.table.table-hover#enrollments
-                    thead
-                        tr
-                            th Assignatura
-                            th Pràctiques
-                            th Seminari
-                    each enrollment in enrollments
-                        tbody
-                            tr
-                                td(style="vertical-align: middle;")= enrollment.subject.name
-                                    input.enrollment_id(type="hidden", name="enrollment", value= enrollment._id)
-                                td(style="vertical-align: middle;")
-                                    input.editable(name="practicum_group", style="vertical-align: middle;", value= enrollment.practicum_group, disabled)
-                                td(style="vertical-align: middle;")
-                                    input.editable(name="seminar_group", style="vertical-align: middle;", value= enrollment.seminar_group, disabled)
-                                td
-                                    a.edit_enrollment.icon-edit(href="#")
+@html.extend('layout', function(model){
+    @html.block('scripts', function(model) {
+        <script src='/js/enrollments.js'/>
+        <script src='/js/profile.js'/>
+    })
+    @html.block('content', function(model) {
+        <h1>title</h1>
+        @if (model.user) {
+            <ul class="nav nav-tabs">
+                @if(model.enrollments && model.enrollments.length > 0) {
+                    <li class="active"><a id="enrollments_tab" class="profile_tab">Assignatures i grups</a></li>
+                    <li><a id="espai_aula_tab" class="profile_tab">Espai Aula</a></li>
+                }
+                @else {
+                    <li class="active"><a id="espai_aula_tab" class="profile_tab">Espai Aula</a></li>
+                }
+            </ul>
+            <div id="espai_aula" style="">
+                <form action="/users/config" method="post">
+                    <div>
+                        <h2>Configuració automàtica</h2>
+                        <p>Introdueix el teu usuari i contrasenya del Campus Global per configurar les teves assignatures i grups automàticament a partir de la informació que hi ha al teu Espai Aula. Tranquil, no guardem les teves dades ;)</p>
+                    </div>
+                    <div>
+                        <label>Usuari</label>
+                        <input type="text" name="unis" placeholder="u00000"/>
+                    </div>
+                    <div>
+                        <label>Contrasenya</label>
+                        <input type="password" name="password" placeholder="Contrasenya del Campus Global"/>
+                    </div>
+                    <div>
+                        <input type="submit" value="Configura les assignatures" class="btn btn-primary"/>
+                    </div>
+                </form>
+            </div>
+            <div id="enrollments" style="@(model.enrollments && model.enrollments.length > 0 ? '' : 'display: none;')">
+                @if(model.enrollments && model.enrollments.length > 0) {
+                    <p>Edita les teves assignatures i els seus grups de pràctiques o seminari</p>
+                    <table id="enrollments" class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Assignatura</th>
+                                <th>Pràctiques</th>
+                                <th>Seminari</th>
+                            </tr>
+                        </thead>
+                    </table>
+                    @model.enrollments.forEach(function(enrollment){
+                        <tbody>
+                            <tr>
+                                <td style="vertical-align: middle;">
+                                    @enrollment.subject.name
+                                    <input class="enrollment_id" type="hidden" name="enrollment" value="@enrollment._id"/>
+                                </td>
+                                <td style="vertical-align: middle;">
+                                    <input class="editable" name="practicum_group" style="vertical-align: middle;" value="@enrollment.practicum_group" disabled="">
+                                </td>
+                                <td style="vertical-align: middle;">
+                                    <input class="editable" name="seminar_group" style="vertical-align: middle;" value="@enrollment.seminar_group" disabled="">
+                                </td>
+                                <td>
+                                    <a class="edit_enrollment icon-edit" href="#"/>
+                                </td>
+                            </tr>
+                        </tbody>
+                    })
+                }
+            </div>
+        }
+    })
+})

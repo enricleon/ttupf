@@ -6,7 +6,7 @@
  * To change this template use File | Settings | File Templates.
  */
 $(document).ready(function() {
-    $(".ok_enrollment").live("click", function() {
+    $(".ok_enrollment").on("click", function() {
         $(this).attr("class", "icon-edit edit_enrollment");
 
         var current_enrollment = $(this).parents("tr");
@@ -45,7 +45,7 @@ $(document).ready(function() {
         });
     });
 
-    $(".edit_enrollment").live("click", function() {
+    $(".edit_enrollment").on("click", function() {
         $(".edit_enrollment").each(function(){
             $(this).hide();
         });
