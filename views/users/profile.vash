@@ -37,37 +37,37 @@
                     </div>
                 </div>
             </div>
-            <div id="enrollments" style="@(model.enrollments && model.enrollments.length > 0 ? '' : 'display: none;')">
+            <div class="panel panel-default" id="enrollments" style="@(model.enrollments && model.enrollments.length > 0 ? '' : 'display: none;')">
                 @if(model.enrollments && model.enrollments.length > 0) {
-                    <p>Edita les teves assignatures i els seus grups de pràctiques o seminari</p>
-                    <table id="enrollments" class="table table-hover">
+                    <div class="panel-heading">Edita les teves assignatures i els seus grups de pràctiques o seminari</div>
+                    <table id="enrollments" class="table table-responsive table-striped">
                         <thead>
-                        <tr>
-                            <th>Assignatura</th>
-                            <th>Pràctiques</th>
-                            <th>Seminari</th>
-                        </tr>
+                            <tr>
+                                <th>Assignatura</th>
+                                <th>Pràctiques</th>
+                                <th>Seminari</th>
+                            </tr>
                         </thead>
-                    </table>
-                    @model.enrollments.forEach(function(enrollment){
                         <tbody>
-                        <tr>
-                            <td style="vertical-align: middle;">
-                                @enrollment.subject.name
-                                <input class="enrollment_id" type="hidden" name="enrollment" value="@enrollment._id"/>
-                            </td>
-                            <td style="vertical-align: middle;">
-                                <input class="editable" name="practicum_group" style="vertical-align: middle;" value="@enrollment.practicum_group" disabled="">
-                            </td>
-                            <td style="vertical-align: middle;">
-                                <input class="editable" name="seminar_group" style="vertical-align: middle;" value="@enrollment.seminar_group" disabled="">
-                            </td>
-                            <td>
-                                <a class="edit_enrollment icon-edit" href="#"/>
-                            </td>
-                        </tr>
+                            @model.enrollments.forEach(function(enrollment){
+                                <tr>
+                                    <td style="vertical-align: middle;">
+                                        @enrollment.subject.name
+                                        <input class="enrollment_id" type="hidden" name="enrollment" value="@enrollment._id"/>
+                                    </td>
+                                    <td style="vertical-align: middle;">
+                                        <input class="editable" name="practicum_group" style="vertical-align: middle;" value="@enrollment.practicum_group" disabled="">
+                                    </td>
+                                    <td style="vertical-align: middle;">
+                                        <input class="editable" name="seminar_group" style="vertical-align: middle;" value="@enrollment.seminar_group" disabled="">
+                                    </td>
+                                    <td>
+                                        <a class="edit_enrollment icon-edit" href="#"/>
+                                    </td>
+                                </tr>
+                            })
                         </tbody>
-                    })
+                    </table>
                 }
             </div>
         }
