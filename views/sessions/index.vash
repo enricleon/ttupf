@@ -10,7 +10,7 @@
                 </li>
                 <li class="next">
                     @{ var next = "/sessions/" + model.date.add(2).days().toString('d/M/yyyy'); }
-                    <a href=next> Dia següent &rarr;</a>
+                    <a href=@next> Dia següent &rarr;</a>
                 </li>
             </ul>
         }
