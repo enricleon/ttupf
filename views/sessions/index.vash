@@ -1,8 +1,9 @@
 @html.extend('layout', function(model){
     @html.block('menu', function(model) {
-        <li><a href="/logout">Tanca sessió</a></li>
-        <li><a href="/users/profile">El meu compte</a></li>
-        <li class="active"><a href="/sessions/index">El meu horari</a></li>
+        <ul class="nav navbar-nav">
+            <li><a href="/users/profile">El meu compte</a></li>
+            <li class="active"><a href="/sessions/index">El meu horari</a></li>
+        </ul>
     })
     @html.block('content', function(model){
         <h1 class='mainContent'>@model.title</h1>

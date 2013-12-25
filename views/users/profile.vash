@@ -4,9 +4,10 @@
         <script src='/js/profile.js'></script>
     })
     @html.block('menu', function(model) {
-        <li><a href="/logout">Tanca sessió</a></li>
-        <li class="active"><a href="/users/profile">El meu compte</a></li>
-        <li><a href="/sessions/index">El meu horari</a></li>
+        <ul class="nav navbar-nav">
+            <li class="active"><a href="/users/profile">El meu compte</a></li>
+            <li><a href="/sessions/index">El meu horari</a></li>
+        </ul>
     })
     @html.block('content', function(model) {
         <h1>@model.title</h1>
@@ -43,37 +44,39 @@
                 </div>
             </div>
             @if(model.enrollments && model.enrollments.length > 0) {
-                <p>Edita les teves assignatures i els seus grups de pràctiques o seminari</p>
-                <table id="enrollments" class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th>Assignatura</th>
-                            <th>Pràctiques</th>
-                            <th>Seminari</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    @model.enrollments.forEach(function(enrollment){
-                        <tbody>
+                <div id="enrollments">
+                    <p>Edita les teves assignatures i els seus grups de pràctiques o seminari</p>
+                    <table class="table table-hover">
+                        <thead>
                             <tr>
-                                <td style="vertical-align: middle;">
-                                    @enrollment.subject.name
-                                    <input class="enrollment_id" type="hidden" name="enrollment" value="@enrollment._id"/>
-                                </td>
-                                <td style="vertical-align: middle;">
-                                    <input class="form-control editable" name="practicum_group" style="vertical-align: middle;" value="@enrollment.practicum_group" disabled="">
-                                </td>
-                                <td style="vertical-align: middle;">
-                                    <input class="form-control editable" name="seminar_group" style="vertical-align: middle;" value="@enrollment.seminar_group" disabled="">
-                                </td>
-                                <td>
-                                    <span class="edit_enrollment glyphicon glyphicon-edit" style="cursor: pointer;" href="#"></span>
-                                    <span class="ok_enrollment glyphicon glyphicon-ok" style="display: none; cursor: pointer;" href="#"></span>
-                                </td>
+                                <th>Assignatura</th>
+                                <th>Pràctiques</th>
+                                <th>Seminari</th>
+                                <th></th>
                             </tr>
-                        </tbody>
-                    })
-                </table>
+                        </thead>
+                        @model.enrollments.forEach(function(enrollment){
+                            <tbody>
+                                <tr>
+                                    <td style="vertical-align: middle;">
+                                        @enrollment.subject.name
+                                        <input class="enrollment_id" type="hidden" name="enrollment" value="@enrollment._id"/>
+                                    </td>
+                                    <td style="vertical-align: middle;">
+                                        <input class="form-control editable" name="practicum_group" style="vertical-align: middle;" value="@enrollment.practicum_group" disabled="">
+                                    </td>
+                                    <td style="vertical-align: middle;">
+                                        <input class="form-control editable" name="seminar_group" style="vertical-align: middle;" value="@enrollment.seminar_group" disabled="">
+                                    </td>
+                                    <td>
+                                        <span class="edit_enrollment glyphicon glyphicon-edit" style="cursor: pointer;" href="#"></span>
+                                        <span class="ok_enrollment glyphicon glyphicon-ok" style="display: none; cursor: pointer;" href="#"></span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        })
+                    </table>
+                </div>
             }
         }
     })

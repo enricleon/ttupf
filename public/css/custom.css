@@ -46,6 +46,7 @@ form input, form button {
     border-color: transparent;
     -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.0);
     box-shadow: inset 0 1px 1px rgba(0,0,0,0.0);
+    color: black !important;
 }
 .formPanel {
     display:inline;
@@ -75,13 +76,5 @@ form input, form button {
     font-size: 12px;
     line-height: 12px;
     display: inline;
-}
-.mainContent{
-    margin-top: 37px;
-}
-.mainPage{
-    width:50%;
-    float:left;
-    text-align:justify;
 }
 

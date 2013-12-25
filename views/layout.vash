@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Bootstrap 101 Template</title>
+    <title>@model.title</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Bootstrap -->
@@ -34,17 +34,19 @@
                 <a class="navbar-brand" href="/index">Timetable UPF</a>
             </div>
             <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    @{
-                        if(typeof(model.user) != 'undefined') {
-                            @html.block('menu', function(model) {
-                                <li><a href="/logout">Tanca sessió</a></li>
+                @{
+                    if(typeof(model.user) != 'undefined') {
+                        @html.block('menu', function(model) {
+                            <ul class="nav navbar-nav">
                                 <li><a href="/users/profile">El meu compte</a></li>
                                 <li><a href="/sessions/index">El meu horari</a></li>
-                            })
-                        }
+                            </ul>
+                        })
+                        <div class="navbar-form navbar-right">
+                            <button class="btn btn-danger" onClick="javascript:window.location.href = '/logout'">Tanca sessió</button>
+                        </div>
                     }
-                </ul>
+                }
             </div><!--/.nav-collapse -->
         </div>
     </div>
