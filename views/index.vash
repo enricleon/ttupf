@@ -5,10 +5,10 @@
                 if(typeof(model.user) == 'undefined') {
                     <div class="col-md-5">
                         <div class='form-signin-wrapper jumbotron'>
-                            <form class="form-signin" role="form" action="/login">
+                            <form class="form-signin" role="form" action="/login" method="post">
                                 <h2 class="form-signin-heading">Inicia sessió</h2>
-                                <input type="text" class="form-control" placeholder="Usuari" required="" autofocus="">
-                                <input type="password" class="form-control" placeholder="Contrassenya" required="">
+                                <input type="text" name="username" class="form-control" placeholder="Usuari" required="" autofocus="">
+                                <input type="password" name="password" class="form-control" placeholder="Contrassenya" required="">
                                 <label class="checkbox">
                                     <input type="checkbox" value="remember-me"> Recorda'm
                                 </label>
