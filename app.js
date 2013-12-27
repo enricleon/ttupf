@@ -6,8 +6,6 @@
     var express = require('express'),
         mongoose = require('mongoose'),
         http = require('http'),
-        RedisStore = require('connect-redis')(express),
-        sessionStore = new RedisStore(),
         path = require('path'),
         passport = require('passport'),
         Config = require('./config'),
@@ -28,12 +26,11 @@
         app.set('view options', { layout: false });
 
         app.use(express.logger());
-        app.use(express.urlencoded())
-        app.use(express.json())
+        app.use(express.bodyParser());
         app.use(express.methodOverride());
 
-        app.use(express.cookieParser());
-        app.use(express.session({secret: "sosecretthaticannottellya", store: sessionStore, key: 'ttupf.sid'}));
+        app.use(express.cookieParser('keyboard cat'));
+        app.use(express.session({ secret: 'keyboard cat' }));
 
         app.use(passport.initialize());
         app.use(passport.session());
@@ -45,12 +42,10 @@
 
     app.configure('development', function(){
         app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
-        mongoose.connect('localhost:27017/ttupf');
     });
 
     app.configure('production', function(){
         app.use(express.errorHandler());
-        mongoose.connect('mongodb://ttupf_mongolab:L_1i2o9n2@ds027748.mongolab.com:27748/ttupf_mongolab');
     });
 
     var User = require('./models/User');
@@ -118,6 +113,12 @@
     passport.use(new LocalStrategy(User.authenticate()));
     passport.serializeUser(User.serializeUser());
     passport.deserializeUser(User.deserializeUser());
+
+//    var uristring = 'mongodb://admintest:L_1i2o9n2@ds045938.mongolab.com:45938' || process.env.MONGOLAB_URI || 'localhost:27017';
+
+    // Connect mongoose
+    mongoose.connect('mongodb://ttupf_mongolab:L_1i2o9n2@ds027748.mongolab.com:27748/ttupf_mongolab');
+//    mongoose.connect('localhost:27017/ttupf');
 
     // Setup routes
     require('./routes')(app);
