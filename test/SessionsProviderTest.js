@@ -14,6 +14,8 @@ var Date = require('../public/js/date');
 var GradeCourse = require('../models/GradeCourse');
 var SessionsProvider = require('../providers/SessionsProvider');
 
+var mongoose = require('mongoose');
+
 Vows.describe('Blocks').addBatch({
     'Block with multiple grups and aulas in the same line': {
         topic: function() {
@@ -135,6 +137,76 @@ Vows.describe('Blocks').addBatch({
         },
         'the session should have the comment: "Ascensor Intel·ligent"': function(topic) {
             Assert.equal(topic.sessions[0].comment, "Ascensor Intel·ligent");
+        }
+    },
+    'Block with theory groups A and B': {
+        topic: function() {
+            var html = '<td><div align="center">Algebra Lineal i Matemàtica Discreta<br><b>TEORIA</b><br>T1A: 52.223<br>T1B: 52.119<br></div></td>';
+            var date = Date.parse("25/09/2013 10:30");
+
+            var blockToTest = new Block(html, date);
+
+            blockToTest.Finish = this.callback;
+
+            var gei_c1_t1_g1 = new GradeCourse({
+                timetable_url: "http://www.upf.edu/esup/docencia/horaris1314/horaris_1314_GEI_C1_T1_G1.html",
+                theory_group: "1",
+                grade: null,
+                period: null,
+                course: null
+            });
+
+            var sessionsProvider = new SessionsProvider(gei_c1_t1_g1);
+            sessionsProvider.ParseBlock(blockToTest);
+        },
+        'should have two sessions': function(topic) {
+            Assert.equal(topic.sessions.length, 2);
+        },
+        'the first session should be a TEORIA session': function(topic) {
+            Assert.equal(topic.sessions[0].type, "TEORIA");
+        },
+        'the first session group should be 1': function(topic) {
+            Assert.equal(topic.sessions[0].group, "1");
+        },
+        'the second session should be a TEORIA session': function(topic) {
+            Assert.equal(topic.sessions[1].type, "TEORIA");
+        },
+        'the second session group should be 1': function(topic) {
+            Assert.equal(topic.sessions[1].group, "1");
+        }
+    },
+    'Block with apostrophe on subject name': {
+        topic: function() {
+            var html = "<td id='cela_1'><div align = 'center'>Processament d'Imatges en Color<br /><B>TEORIA</B><br />Aula: 52.119<br /></div></td>";
+            var date = Date.parse("18/02/2014 12:30");
+
+            var blockToTest = new Block(html, date);
+
+//            mongoose.connect('mongodb://ttupf_mongolab:L_1i2o9n2@ds027748.mongolab.com:27748/ttupf_mongolab');
+            mongoose.connect('localhost:27017/ttupf');
+
+            var opt_c1_t2_g1 = new GradeCourse({
+                timetable_url: "http://www.upf.edu/esup/docencia/horaris1314/horaris_1314_OPT_C1_T2_G1.html",
+                theory_group: "1",
+                grade: null,
+                period: null,
+                course: null
+            });
+
+            var sessionsProvider = new SessionsProvider(opt_c1_t2_g1);
+            sessionsProvider.ParseBlock(blockToTest);
+        },
+        'should have one session': function(topic) {
+            Assert.equal(topic.sessions.length, 1);
+        },
+        'the first session should be a TEORIA session': function(topic) {
+            Assert.equal(topic.sessions[0].type, "TEORIA");
+        },
+        'the first session group should be 1': function(topic) {
+            Assert.equal(topic.sessions[0].group, "1");
+        },
+        'the first session assignatura name should be "Processament d\'Imatges en Color"': function(topic) {
+            Assert.equal(topic.sessions[0].subject_name, "Processament d'Imatges en Color");
         }
     }
 }).export(module); // Export the Suite

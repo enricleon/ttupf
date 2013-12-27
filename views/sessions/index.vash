@@ -35,7 +35,7 @@
                     <tbody>
                     <tr>
                         <td>
-                            @(session.timestamp_start.getUTCHours()):@(session.timestamp_start.getUTCMinutes())
+                            @(session.timestamp_start.getHours()):@(session.timestamp_start.getMinutes())
                         </td>
                         <td>@session.subject</td>
                         <td>@session.type</td>
