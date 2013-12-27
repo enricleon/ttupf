@@ -20,6 +20,12 @@
                 </li>
             </ul>
         }
+        @if(model.message) {
+            <div class="alert alert-info alert-dismissable">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                <p>@html.raw(model.message)</p>
+            </div>
+        }
         @if(model.sessions && model.sessions.length > 0) {
             <p>Hola @(model.user.username), aquestes son les classes que tens per aquest dia
             <table class="table table-hover">

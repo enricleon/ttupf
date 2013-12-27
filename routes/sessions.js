@@ -37,7 +37,7 @@ exports.index = function(req, res){
             res.redirect('/sessions');
         }
         else {
-            res.render("simpleMessage", { title: 'Horari', user: req.user, message: "Sembla que no has matriculat assignatures o no tens l'horari configurat. Fes click <a href='/users/profile'>aquí</a> per a configurar el teu horari" });
+            res.render("sessions/index", { title: 'Horari', user: req.user, message: "Sembla que no has matriculat assignatures o no tens l'horari configurat. Fes click <a href='/users/profile'>aquí</a> per a configurar el teu horari" });
         }
     });
 };
