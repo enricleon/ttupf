@@ -8,7 +8,7 @@
                         <input type="text" name="username" class="form-control" placeholder="Usuari" required="" autofocus="">
                         <input type="password" name="password" class="form-control" placeholder="Contrassenya" required="">
                         <label class="checkbox">
-                            <input type="checkbox" value="remember-me"> Recorda'm
+                            <input type="checkbox" value="rememberme"> Recorda'm
                         </label>
                         <button class="btn btn-lg btn-primary btn-block" type="submit">Entra</button>
                     </form>
