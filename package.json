@@ -23,6 +23,7 @@
     "passport-http-bearer": "*",
     "passport-http": "*",
     "passport-oauth2-client-password": "*",
-    "vash": "*"
+    "vash": "*",
+    "connect-redis": "*"
   }
 }

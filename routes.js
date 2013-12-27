@@ -6,6 +6,8 @@
 var passport = require('passport'),
     ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn;
 
+var basicAuth = require('express').basicAuth;
+
 var Block = require('./providers/Block');
 var SessionsProvider = require('./providers/SessionsProvider');
 var Date = require('./public/js/date.js');
@@ -96,27 +98,19 @@ module.exports = function (app) {
     // Timetable route is an authenticated route responsible to show the personal today's timetable to the user
     app.get('/sessions/index', ensureLoggedIn('/login'), sessions.index);
 
-    // This triggers the UPF timetable parser
-    app.get('/sessions/update', sessions.update);
-
     // Timetable route/:date shows the personal daily timetable to the user on the specified date
     app.get('/sessions/:day/:month/:year', ensureLoggedIn('/login'), sessions.show);
 
-    app.get('/sessions/test', function() {
-        var html = '<td id="cela_15"><div align="center">Sistemes Operatius <br><b>SEMINARI</b><br>S102: 52.329<br><b>PRÀCTIQUES</b><br>P102: 54.004<br></div></td>';
-        var date = Date.parse("11/01/2013 18:30");
+    var auth = function(req, res, next) {
+        basicAuth(function(user, pass, callback) {
+            callback(null, user === 'ttupfadmin' && pass === 'ttupf13jef');
+        })(req, res, next);
+    };
 
-        var blockToTest = new Block(html, date);
+    app.get('/subjects/update', auth, subjects.update);
 
-        blockToTest.Finish = function(topic) {
-            console.log(topic);
-        };
-
-        var sessionsProvider = new SessionsProvider();
-        sessionsProvider.ParseBlock(blockToTest);
-    })
-
-    app.get('/subjects/update', subjects.update);
+    // This triggers the UPF timetable parser
+    app.get('/sessions/update', auth, sessions.update);
 
     /**
      * Timetable routes
