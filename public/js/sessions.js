@@ -10,6 +10,7 @@ $(document).ready(function() {
     $(".timestamp_start_utc").each(function() {
         var utc_start_string = $(this).html();
         var utc_start_date = new Date(utc_start_string);
-        $(this).html(utc_start_date.getHours() + ":" + utc_start_date.getMinutes());
+        var local_start_string = utc_start_date.getHours() + ":" + utc_start_date.getMinutes();
+        $(this).html(local_start_string);
     });
 });

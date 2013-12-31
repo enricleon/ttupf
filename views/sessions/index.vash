@@ -1,7 +1,4 @@
 @html.extend('layout', function(model){
-    @html.block('scripts', function(model) {
-        <script src='/js/sessions.js'></script>
-    })
     @html.block('menu', function(model) {
         <ul class="nav navbar-nav">
             <li><a href="/users/profile">El meu compte</a></li>
@@ -40,7 +37,12 @@
                     <tbody>
                     <tr>
                         <td class="timestamp_start_utc">
-                            @(session.timestamp_start.toUTCString())
+                            @{
+                                var utc_start_string = session.timestamp_start.toUTCString();
+                                var utc_start_date = new Date(utc_start_string);
+                                var local_start_string = utc_start_date.getHours() + ":" + utc_start_date.getMinutes();
+                            }
+                            @(local_start_string)
                         </td>
                         <td>@session.subject</td>
                         <td>@session.type</td>
