@@ -1,4 +1,7 @@
 @html.extend('layout', function(model){
+    @html.block('scripts', function(model) {
+        <script src='/js/sessions.js'></script>
+    })
     @html.block('menu', function(model) {
         <ul class="nav navbar-nav">
             <li><a href="/users/profile">El meu compte</a></li>
@@ -36,8 +39,8 @@
                     @model.sessions.forEach(function(session) {
                     <tbody>
                     <tr>
-                        <td>
-                            @(session.timestamp_start.getHours()):@(session.timestamp_start.getMinutes())
+                        <td class="timestamp_start_utc">
+                            @(session.timestamp_start.toUTCString())
                         </td>
                         <td>@session.subject</td>
                         <td>@session.type</td>
