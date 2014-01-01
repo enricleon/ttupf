@@ -36,14 +36,13 @@
                     @model.sessions.forEach(function(session) {
                     <tbody>
                     <tr>
-                        <td class="timestamp_start_utc">
-                            @{
-                                var utc_start_string = session.timestamp_start.toUTCString();
-                                var utc_start_date = new Date(utc_start_string);
-                                var local_start_string = utc_start_date.getHours() + ":" + utc_start_date.getMinutes();
-                            }
-                            @(local_start_string)
+                        <td id="timestamp_start_utc@model.sessions.indexOf(session)">
                         </td>
+                        <script>
+                            var local_start = new Date("@session.timestamp_start.toUTCString()");
+                            var local_start_string = local_start.getHours() + ":" + local_start.getMinutes();
+                            document.getElementById("timestamp_start_utc@model.sessions.indexOf(session)").innerHTML = local_start_string;
+                        </script>
                         <td>@session.subject</td>
                         <td>@session.type</td>
                         <td>@session.classroom</td>
