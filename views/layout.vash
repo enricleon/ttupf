@@ -18,10 +18,12 @@
 </head>
 <body>
     <!-- Fixed navbar -->
-    <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="navbar-inner navbar-default navbar-fixed-top" role="navigation">
         <div class="container">
             <div class="navbar-header">
-                @{
+				<a style="float: left;" href="/"><img style="height: 50px;" src="/img/logo.png"></a>
+				<a class="navbar-brand" href="/index">Timetable UPF</a>
+				@{
                     if(typeof(model.user) != 'undefined') {
                         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
                             <span class="sr-only">Toggle navigation</span>
@@ -31,7 +33,6 @@
                         </button>
                     }
                 }
-                <a class="navbar-brand" href="/index">Timetable UPF</a>
             </div>
             <div class="navbar-collapse collapse">
                 @{
