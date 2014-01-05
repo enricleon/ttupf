@@ -31,6 +31,17 @@ var SessionsProvider = module.exports = function(gradeCourse) {
     this.lastLine = "";
 };
 
+SessionsProvider.prototype.BlockInfo = function(currentBlock, currentLine, nextLine) {
+    console.log("-- Block failing");
+    console.log("-- Date: " + currentBlock.data.toLocaleString());
+    currentBlock.sessions.forEach(function(session, index) {
+        console.log("---- Session " + index);
+        console.log("---- " + JSON.stringify(session.toObject()));
+        console.log("---- Line: " + currentLine);
+        console.log("---- NextLine: " + nextLine);
+    });
+}
+
 // Looks for a group, and makes use of the $linetype to search that will be like {0 => Aulagrup, 1 => Tipus}
 SessionsProvider.prototype.GetGroupsFromLine = function(group_string) {
     // Look for a SXXX or PXXX as many as exists in the aulagrup line
@@ -108,28 +119,28 @@ SessionsProvider.prototype.FillType = function(currentBlock) {
 SessionsProvider.prototype.FillComment = function(currentBlock) {
     //Tenim algo de comment
     currentBlock.SetPropertyToAll("comment", this.lastLine);
+};
 
-    return;
+SessionsProvider.prototype.FinishSubject = function(currentBlock, subject_name) {
+    if(subject_name) {
+        currentBlock.SetPropertyToAll("subject_name", subject_name);
+    }
+
+    if(currentBlock.currentLine == currentBlock.lines.length - 1 && currentBlock.finish) {
+        currentBlock.finish(null, currentBlock);
+    }
 };
 
 SessionsProvider.prototype.FillSubject = function(currentBlock) {
+    var me = this;
     // Whe have now the subject's name.
     var subject_name = this.lastLine;
 
     currentBlock.SetPropertyToAll("timestamp_start", currentBlock.data.toUTCString());
 
-    if(currentBlock.Finish) {
-        currentBlock.SetPropertyToAll("subject_name", subject_name);
-        if(currentBlock.currentLine == currentBlock.lines.length - 1) {
-            currentBlock.Finish(null, currentBlock);
-        }
-    }
-    else {
-        var course = this.gradeCourse.course;
-        var grade = this.gradeCourse.grade;
+    var block_sessions = currentBlock.GetSessions();
 
-        var block_sessions = currentBlock.GetSessions();
-        currentBlock.Reset();
+    if(currentBlock.usesDatabase) {
         block_sessions.forEach(function(session) {
             var upsertData = session.toObject();
 
@@ -140,35 +151,32 @@ SessionsProvider.prototype.FillSubject = function(currentBlock) {
                 if(!err && session_doc) {
                     NameDistanceProvider.DistanceDictionary(subject_name, null, function(distance_dictionary) {
                         var lower_distance = NameDistanceProvider.LowerDistance(distance_dictionary);
-                        var saveGrade = false;
 
                         if(lower_distance.distance >= 12) {
                             lower_distance.name = subject_name;
-                            saveGrade = true;
                         }
-                        Subject.findOneAndUpdate({name: lower_distance.name},{$addToSet: {sessions: session_doc}, course: course},{ upsert: true }, function(err, subject_doc){
+                        Subject.findOneAndUpdate({name: lower_distance.name},{$addToSet: {sessions: session_doc}},{ upsert: true }, function(err, subject_doc){
                             if(err){
+                                me.FinishSubject(currentBlock, subject_name);
                                 console.log(err);
                             }
                             else {
+                                me.FinishSubject(currentBlock, lower_distance.name);
                                 session_doc.subject = lower_distance.id;
                                 session_doc.save();
-                                if(saveGrade){
-                                    Grade.findOneAndUpdate(grade,{$addToSet: {subjects: subject_doc}},{ upsert: true }, function(err, doc_grade){
-                                        if(err){
-                                            console.log(err);
-                                        }
-                                    });
-                                }
                             }
                         });
                     });
                 }
                 else {
+                    me.FinishSubject(currentBlock, subject_name);
                     console.log(err);
                 }
             });
         });
+    }
+    else {
+        me.FinishSubject(currentBlock, subject_name);
     }
 
     this.currentState = States.INITIAL;
@@ -283,7 +291,7 @@ SessionsProvider.prototype.StateMachine = function(line, currentBlock) {
                     this.currentState = States.HAVE_COMMENT;
                     break;
                 default:
-                    console.log("FALLO: " + currentBlock.data.toString())
+                    this.BlockInfo(currentBlock, line, nextLine);
                     this.currentState = States.END;
                     break;
             }
@@ -300,6 +308,7 @@ SessionsProvider.prototype.StateMachine = function(line, currentBlock) {
                     this.currentState = States.HAVE_COMMENT;
                     break;
                 default:
+                    this.BlockInfo(currentBlock, line, nextLine);
                     this.currentState = States.END;
                     break;
             }
@@ -313,6 +322,7 @@ SessionsProvider.prototype.StateMachine = function(line, currentBlock) {
                     this.currentState = States.HAVE_SUBJECT;
                     break;
                 default:
+                    this.BlockInfo(currentBlock, line, nextLine);
                     this.currentState = States.END;
                     break;
             }
@@ -329,12 +339,12 @@ SessionsProvider.prototype.StateMachine = function(line, currentBlock) {
                     this.currentState = States.HAVE_HOUR;
                     break;
                 default:
+                    this.BlockInfo(currentBlock, line, nextLine);
                     this.currentState = States.END;
                     break;
             }
             break;
         case States.HAVE_SUBJECT:
-            console.log("Block ended!");
             break;
         default:
             break;
@@ -389,7 +399,6 @@ SessionsProvider.prototype.ParseBlock = function(currentBlock) {
                     self.StateMachine(content, currentBlock);
                 }
                 else {
-                    console.log("End of parsing");
                     self.currentState = States.INITIAL;
                 }
             }

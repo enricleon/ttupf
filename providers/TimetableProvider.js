@@ -17,19 +17,23 @@ var sessionsProvider;
 exports.GetHtmlFrom = function(gradeCourse) {
     sessionsProvider = new SessionsProvider(gradeCourse);
     request.get(gradeCourse.timetable_url, {encoding: "binary", timeout: 30000}, function (error, response, body) {
-        if (!error)
+        if (!error) {
             gradeCourse.update(body);
-        else
+        }
+        else {
             console.log(error);
+        }
     });
 }
 
-exports.ParseGradeCourse = function(body) {
+exports.ParseGradeCourse = function(body, timetable_url) {
     var xml = body;
     var doc = new dom().parseFromString(xml);
 
     //Agafem les setmanes del dom
     var nodes = xpath.select("/html/body//table/tbody", doc);
+
+    console.log("\n---- URL: " + timetable_url);
 
     nodes.forEach(parseWeek);
 }
@@ -63,6 +67,7 @@ var parseDay = function(item, index) {
     var data = date.parse(dia + " " + hora);
 
     var currentBlock = new Block(item, data);
+    currentBlock.usesDatabase = true;
 
     sessionsProvider.ParseBlock(currentBlock);
 }

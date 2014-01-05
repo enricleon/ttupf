@@ -9,6 +9,7 @@
         path = require('path'),
         passport = require('passport'),
         Config = require('./config'),
+        config = new Config(),
         LocalStrategy = require('passport-local').Strategy,
         BearerStrategy = require('passport-http-bearer').Strategy,
         BasicStrategy = require('passport-http').BasicStrategy,
@@ -38,6 +39,19 @@
 
         app.use(app.router);
         app.use(express.static(path.join(__dirname, 'public')));
+
+        // Handler in case Mongo  goes down
+        app.use(function(req, res, next) {
+            // We lost connection!
+            if (1 !== mongoose.connection.readyState) {
+
+                // Reconnect if we can
+                mongoose.connect(config.dbUri, config.dbOptions);
+                res.status(503);
+                throw new Error('Mongo not available. Reconnecting...');
+            }
+            next();
+        });
     });
 
     app.configure('development', function(){
@@ -114,11 +128,8 @@
     passport.serializeUser(User.serializeUser());
     passport.deserializeUser(User.deserializeUser());
 
-//    var uristring = 'mongodb://admintest:L_1i2o9n2@ds045938.mongolab.com:45938' || process.env.MONGOLAB_URI || 'localhost:27017';
-
     // Connect mongoose
-    mongoose.connect('mongodb://ttupf_mongolab:L_1i2o9n2@ds027748.mongolab.com:27748/ttupf_mongolab');
-//    mongoose.connect('localhost:27017/ttupf');
+    mongoose.connect(config.dbUri, config.dbOptions);
 
     // Setup routes
     require('./routes')(app);
@@ -129,7 +140,6 @@
         if (err) {
             console.log(err);
         }
-        var config = new Config();
         config.LoadConfig(data);
     });
 

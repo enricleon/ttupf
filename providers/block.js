@@ -14,6 +14,7 @@ var Block = module.exports = function(html, data) {
     this.html = html;
     this.lines = [];
     this.currentLine = -1;
+    this.usesDatabase = false;
 };
 
 // properties and methods
@@ -30,11 +31,12 @@ Block.prototype = {
         return this.sessions;
     },
     SetPropertyToAll: function(property, value, override) {
-        this.sessions.forEach(function (element) {
+        for(var i = 0; i < this.sessions.length; i++) {
+            var element = this.sessions[i];
             if(!(!override && element[property])) {
                 element[property] = value;
             }
-        });
+        }
     },
     Reset: function() {
         this.sessions = [];

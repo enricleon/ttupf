@@ -24,7 +24,7 @@ Vows.describe('Blocks').addBatch({
 
             var blockToTest = new Block(html, date);
 
-            blockToTest.Finish = this.callback;
+            blockToTest.finish = this.callback;
 
             var gei_c1_t2_g1 = new GradeCourse({
                 timetable_url: "http://www.upf.edu/esup/docencia/horaris1213/graus12_13/horaris_1213_GET_C2_T2_G1.html",
@@ -54,7 +54,7 @@ Vows.describe('Blocks').addBatch({
 
             var blockToTest = new Block(html, date);
 
-            blockToTest.Finish = this.callback;
+            blockToTest.finish = this.callback;
 
             var sessionsProvider = new SessionsProvider();
             sessionsProvider.ParseBlock(blockToTest);
@@ -77,7 +77,7 @@ Vows.describe('Blocks').addBatch({
 
             var blockToTest = new Block(html, date);
 
-            blockToTest.Finish = this.callback;
+            blockToTest.finish = this.callback;
 
             var gei_c1_t2_g1 = new GradeCourse({
                 timetable_url: "http://www.upf.edu/esup/docencia/horaris1213/graus12_13/horaris_1213_GET_C2_T2_G1.html",
@@ -113,7 +113,7 @@ Vows.describe('Blocks').addBatch({
 
             var blockToTest = new Block(html, date);
 
-            blockToTest.Finish = this.callback;
+            blockToTest.finish = this.callback;
 
             var get_c4_t1_g1 = new GradeCourse({
                 timetable_url: "http://www.upf.edu/esup/docencia/horaris1314/horaris_1314_GET_C4_T1_G1.html",
@@ -146,7 +146,7 @@ Vows.describe('Blocks').addBatch({
 
             var blockToTest = new Block(html, date);
 
-            blockToTest.Finish = this.callback;
+            blockToTest.finish = this.callback;
 
             var gei_c1_t1_g1 = new GradeCourse({
                 timetable_url: "http://www.upf.edu/esup/docencia/horaris1314/horaris_1314_GEI_C1_T1_G1.html",
@@ -182,8 +182,11 @@ Vows.describe('Blocks').addBatch({
 
             var blockToTest = new Block(html, date);
 
+            blockToTest.finish = this.callback;
+//            blockToTest.usesDatabase = true;
+
 //            mongoose.connect('mongodb://ttupf_mongolab:L_1i2o9n2@ds027748.mongolab.com:27748/ttupf_mongolab');
-            mongoose.connect('localhost:27017/ttupf');
+//            mongoose.connect('localhost:27017/ttupf');
 
             var opt_c1_t2_g1 = new GradeCourse({
                 timetable_url: "http://www.upf.edu/esup/docencia/horaris1314/horaris_1314_OPT_C1_T2_G1.html",
@@ -209,34 +212,35 @@ Vows.describe('Blocks').addBatch({
             Assert.equal(topic.sessions[0].subject_name, "Processament d'Imatges en Color");
         }
     },
-    'Block with apostrophe on subject name': {
+    'Block with subject name different from the one on database (only a word)': {
         topic: function() {
-            var html = '<td id="cela_3"><div align="center">Computació Intel·ligent i Llenguatge Natural<br><b>TEORIA</b><br>Aula: 52.119<br></div></td>';
-            var date = Date.parse("09/01/2014 8:30");
+            var html = '<td id="cela_19"><div align="center">Enginyeria de Programari per a Aplicacions Web<br><b>TEORIA</b><br>Aula: 54.006<br></div></td>';
+            var date = Date.parse("09/01/2014 18:30");
 
             var blockToTest = new Block(html, date);
 
-//            blockToTest.Finish = this.callback;
+            blockToTest.finish = this.callback;
+            blockToTest.usesDatabase = true;
 
 //            mongoose.connect('mongodb://ttupf_mongolab:L_1i2o9n2@ds027748.mongolab.com:27748/ttupf_mongolab');
             mongoose.connect('localhost:27017/ttupf');
 
-            var gei_c3_t2_g1 = new GradeCourse({
-                timetable_url: "http://www.upf.edu/esup/docencia/horaris1314/horaris_1314_GEI_C3_T2_G1.html",
+            var opt_c1_t2_g1 = new GradeCourse({
+                timetable_url: "http://www.upf.edu/esup/docencia/horaris1314/horaris_1314_OPT_C1_T2_G1.html",
                 theory_group: "1",
                 grade: null,
                 period: null,
                 course: null
             });
 
-            var sessionsProvider = new SessionsProvider(gei_c3_t2_g1);
+            var sessionsProvider = new SessionsProvider(opt_c1_t2_g1);
             sessionsProvider.ParseBlock(blockToTest);
         },
         'should have one session': function(topic) {
             Assert.equal(topic.sessions.length, 1);
         },
-        'the first session assignatura name should be "Computació Intel·ligent i Llenguatge Natural"': function(topic) {
-            Assert.equal(topic.sessions[0].subject_name, "Computació Intel·ligent i Llenguatge Natural");
+        'the first session assignatura name should be "Enginyeria de Software per Aplicacions Web"': function(topic) {
+            Assert.equal(topic.sessions[0].subject_name, "Enginyeria de Software per Aplicacions Web");
         }
     }
 }).export(module); // Export the Suite

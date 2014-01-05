@@ -13,11 +13,26 @@ var Grade = require('./models/Grade');
 var Period = require('./models/Period');
 
 var Config = module.exports = function() {
+    this.production = true;
     this.grades = {};
     this.courses = {};
     this.periods = {};
     this.functions = [];
     this.currentFunction = 0;
+    this.dbUri = this.production ? 'mongodb://ttupf_mongolab:L_1i2o9n2@ds027748.mongolab.com:27748/ttupf_mongolab' : 'localhost:27017/ttupf';
+    this.dbOptions = {
+        server:{
+            auto_reconnect: true,
+                poolSize: 10,
+                socketOptions:{
+                keepAlive: 1
+            }
+        },
+        db: {
+            numberOfRetries: 10,
+                retryMiliSeconds: 1000
+        }
+    };
 };
 
 // Function to read the configuration file

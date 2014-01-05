@@ -24,8 +24,11 @@ exports.update = function(req, res) {
     GradeCourse.find({}).populate('course grade period').exec(function (err, gradePeriods){
         // here you are iterating through the users
         // but you don't know when it will finish
-        console.log(gradePeriods);
-        gradePeriods.forEach(function(gradePeriod) {
+        console.log("Parsing sessions");
+        gradePeriods.forEach(function(gradePeriod, index) {
+            var progress = index * 100/gradePeriods.length;
+            gradePeriod.progress = progress;
+            console.log("    -- " + (index + 1) + ". Updating URL: " + gradePeriod.timetable_url);
             gradePeriod.update();
         });
     });

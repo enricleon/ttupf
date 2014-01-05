@@ -1,5 +1,14 @@
 var distance = require('distance');
 
+var subjects_base;
+var pushToDistanceDictionary = function(distance_dictionary, name, callback) {
+    subjects_base.forEach(function(subject) {
+        distance_dictionary.push({name: subject.name, distance: distance.levenshtein(subject.name, name), id: subject._id});
+    });
+
+    callback(distance_dictionary);
+}
+
 exports.DistanceDictionary = function(name, names_array, callback) {
     var distance_dictionary = [];
 
@@ -11,18 +20,20 @@ exports.DistanceDictionary = function(name, names_array, callback) {
     }
     else {
         var Subject = require("../models/Subject.js");
-        Subject.find({}).exec(function(err, subjects) {
-            if(!err && subjects) {
-                subjects.forEach(function(subject) {
-                    distance_dictionary.push({name: subject.name, distance: distance.levenshtein(subject.name, name), id: subject._id});
-                });
-
-                callback(distance_dictionary);
-            }
-            else{
-                callback(null);
-            }
-        });
+        if(!subjects_base) {
+            Subject.find({}).exec(function(err, subjects) {
+                if(!err && subjects) {
+                    subjects_base = subjects;
+                    pushToDistanceDictionary(distance_dictionary, name, callback);
+                }
+                else{
+                    callback(null);
+                }
+            });
+        }
+        else {
+            pushToDistanceDictionary(distance_dictionary, name, callback);
+        }
     }
 };
 
