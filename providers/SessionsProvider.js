@@ -29,16 +29,21 @@ var SessionsProvider = module.exports = function(gradeCourse) {
     this.gradeCourse = gradeCourse;
     this.currentState = States.INITIAL;
     this.lastLine = "";
+    this.nextLine = "";
+    this.lineType;
 };
 
-SessionsProvider.prototype.BlockInfo = function(currentBlock, currentLine, nextLine) {
+SessionsProvider.prototype.BlockInfo = function(currentBlock) {
+    var me = this;
+
     console.log("-- Block failing");
+    console.log("-- Last LineType: " + me.lineType);
     console.log("-- Date: " + currentBlock.data.toLocaleString());
     currentBlock.sessions.forEach(function(session, index) {
         console.log("---- Session " + index);
         console.log("---- " + JSON.stringify(session.toObject()));
-        console.log("---- Line: " + currentLine);
-        console.log("---- NextLine: " + nextLine);
+        console.log("---- Line: " + me.lastLine);
+        console.log("---- NextLine: " + me.nextLine);
     });
 }
 
@@ -185,7 +190,7 @@ SessionsProvider.prototype.FillSubject = function(currentBlock) {
 SessionsProvider.prototype.LineType = function(line, nextLine) {
     var has_type = new RegExp("[ÀÁÈÉÍÏÒÓÚÜÑA-Z]{4,}"); // If line has at least 1 uppercase word is type => 0
     var has_classroom = new RegExp("([0-9]{2}.[A-Za-z0-9][0-9]{2})"); // If line is like PXXX: XX.XXX or SXXX: XX.XXX or SXXX - XX.XXX is aulagrup => 1
-    var has_subject = new RegExp("^((?:(?:[ÀÁÇÈÉÍÏÒÓÚÜÑA-Z]?[àáçèéíïòóúüña-z\\'\\s\\.\\-·]+)+)+[ÀÁÈÉÍÏÒÓÚÜÑA-Z0-9\\s]*)$"); // This regex is a miracle understandable. Sorry xD NO FUNCIONA DEL TOT, de moment detecta l'subject bé però només pot contenir una paraula en majuscula i al final.
+    var has_subject = new RegExp("((?:(?:[ÀÁÇÈÉÍÏÒÓÚÜÑA-Z]?[àáçèéíïòóúüña-z\\'\\s\\.\\-·]+)+)+[ÀÁÈÉÍÏÒÓÚÜÑA-Z0-9\\s]*)"); // This regex is a miracle understandable. Sorry xD NO FUNCIONA DEL TOT, de moment detecta l'subject bé però només pot contenir una paraula en majuscula i al final.
     var has_hour = new RegExp("([0-2]?[0-9][:|.][0-5][0-9])(?![0-9])"); // If line matches at least one hour XX:XX hora =>3
     var has_separator = new RegExp("[\\s|-]{4,}"); // If line matches at least one hour XX:XX hora =>3
 
@@ -202,6 +207,11 @@ SessionsProvider.prototype.LineType = function(line, nextLine) {
     result = line.match(has_separator);
     if (result) {
         return States.HAVE_SEPARATOR;
+    }
+
+    result = line.match(has_hour);
+    if (result) {
+        return States.HAVE_HOUR;
     }
 
     result = line.match(has_subject);
@@ -226,11 +236,6 @@ SessionsProvider.prototype.LineType = function(line, nextLine) {
         }
     }
 
-    result = line.match(has_hour);
-    if (result) {
-        return States.HAVE_HOUR;
-    }
-
     return States.INITIAL;
 };
 
@@ -251,6 +256,8 @@ SessionsProvider.prototype.ProcessState = function(currentBlock) {
         case States.HAVE_SUBJECT:
             this.FillSubject(currentBlock);
             break;
+        case States.END:
+            this.BlockInfo(currentBlock);
         default:
             break;
     }
@@ -260,6 +267,8 @@ SessionsProvider.prototype.StateMachine = function(line, currentBlock) {
     var nextLine = currentBlock.currentLine + 1 < currentBlock.lines.length ? this.CleanLine(currentBlock.lines[currentBlock.currentLine + 1]) : undefined;
     var lineType = this.LineType(line, nextLine);
     this.lastLine = line;
+    this.nextLine = nextLine;
+    this.lineType = lineType;
 
     switch(this.currentState) {
         // We start here
@@ -291,7 +300,6 @@ SessionsProvider.prototype.StateMachine = function(line, currentBlock) {
                     this.currentState = States.HAVE_COMMENT;
                     break;
                 default:
-                    this.BlockInfo(currentBlock, line, nextLine);
                     this.currentState = States.END;
                     break;
             }
@@ -308,7 +316,6 @@ SessionsProvider.prototype.StateMachine = function(line, currentBlock) {
                     this.currentState = States.HAVE_COMMENT;
                     break;
                 default:
-                    this.BlockInfo(currentBlock, line, nextLine);
                     this.currentState = States.END;
                     break;
             }
@@ -322,7 +329,6 @@ SessionsProvider.prototype.StateMachine = function(line, currentBlock) {
                     this.currentState = States.HAVE_SUBJECT;
                     break;
                 default:
-                    this.BlockInfo(currentBlock, line, nextLine);
                     this.currentState = States.END;
                     break;
             }
@@ -339,7 +345,6 @@ SessionsProvider.prototype.StateMachine = function(line, currentBlock) {
                     this.currentState = States.HAVE_HOUR;
                     break;
                 default:
-                    this.BlockInfo(currentBlock, line, nextLine);
                     this.currentState = States.END;
                     break;
             }

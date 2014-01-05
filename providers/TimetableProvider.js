@@ -12,16 +12,28 @@ var request = require("request"),
     date = require('./../public/js/date'),
     SessionsProvider = require('./SessionsProvider');
 
+var attempts = 0;
+var maxAttempts = 10;
 var sessionsProvider;
 
 exports.GetHtmlFrom = function(gradeCourse) {
+    var me = this;
+
     sessionsProvider = new SessionsProvider(gradeCourse);
     request.get(gradeCourse.timetable_url, {encoding: "binary", timeout: 30000}, function (error, response, body) {
         if (!error) {
+            attempts = 0;
             gradeCourse.update(body);
         }
         else {
-            console.log(error);
+            attempts++;
+            if(attempts > maxAttempts) {
+                console.log(error);
+                attempts = 0;
+            }
+            else {
+                me.GetHtmlFrom(gradeCourse);
+            }
         }
     });
 }
@@ -50,7 +62,6 @@ var parseWeek = function(item, index) {
     setmana = index;
 
     var dia_franja = xpath.select("//tr[position() >= 3]//td[not(position() = 1) and not(position() = 7) and not(position() = 13) and not(position() = 19) and not(position() = 25) and not(position() = 31) and not(position() = 37)]/div", doc);
-    console.log("Setmana: " + index);
     dia_franja.forEach(parseDay);
 }
 
