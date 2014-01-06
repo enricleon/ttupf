@@ -39,8 +39,12 @@ SessionsProvider.prototype.BlockInfo = function(currentBlock) {
     console.log("-- Block failing");
     console.log("-- Last LineType: " + me.lineType);
     console.log("-- Date: " + currentBlock.data.toLocaleString());
+    console.log("\n-- HTML: ");
+    console.log("-- ======================================== ");
+    console.log(currentBlock.html.toString());
+    console.log("-- ======================================== ");
     currentBlock.sessions.forEach(function(session, index) {
-        console.log("---- Session " + index);
+        console.log("\n---- Session " + index);
         console.log("---- " + JSON.stringify(session.toObject()));
         console.log("---- Line: " + me.lastLine);
         console.log("---- NextLine: " + me.nextLine);
@@ -50,13 +54,13 @@ SessionsProvider.prototype.BlockInfo = function(currentBlock) {
 // Looks for a group, and makes use of the $linetype to search that will be like {0 => Aulagrup, 1 => Tipus}
 SessionsProvider.prototype.GetGroupsFromLine = function(group_string) {
     // Look for a SXXX or PXXX as many as exists in the aulagrup line
-    var sem_test = new RegExp("[Ss]{1}[0-9]{3}");
-    var prac_test = new RegExp("[Pp]{1}[0-9]{3}");
+    var sem_test = /[Ss]{1}[0-9]{3}/g;
+    var prac_test = /[Pp]{1}[0-9]{3}/g;
 
     var groups = {};
 
-    var sem = sem_test.exec(group_string);
-    var prac = prac_test.exec(group_string);
+    var sem = group_string.match(sem_test);
+    var prac = group_string.match(prac_test);
     groups.sem = sem;
     groups.prac = prac;
 
@@ -66,11 +70,11 @@ SessionsProvider.prototype.GetGroupsFromLine = function(group_string) {
 // Looks for an classroom, and makes use of the $linetype to search that will be like {0 => Aulagrup, 1 => Tipus}
 SessionsProvider.prototype.GetClassroomsFromLine = function(classroom_string) {
     // Look for an classroom on the aulagroup line
-    var classroom_test = new RegExp("[0-9]{2}.[A-Za-z0-9][0-9]{2}"); // If line is like PXXX: XX.XXX or SXXX: XX.XXX or SXXX - XX.XXX is aulagrup => 1
+    var classroom_test = /([0-9]{2}[.]{0,1}[A-Za-z0-9][0-9]{2})/g; // If line is like PXXX: XX.XXX or SXXX: XX.XXX or SXXX - XX.XXX is aulagrup => 1
 
     var classrooms = [];
 
-    var classrooms = classroom_test.exec(classroom_string);
+    var classrooms = classroom_string.match(classroom_test);
 
     return classrooms;
 };
@@ -84,30 +88,92 @@ SessionsProvider.prototype.GetInitialTime = function(hour_string) {
     return hours[0];
 };
 
-SessionsProvider.prototype.FillSession = function(currentBlock) {
-    var groups = this.GetGroupsFromLine(this.lastLine);
-    var classrooms = this.GetClassroomsFromLine(this.lastLine);
-    var self = this;
+SessionsProvider.prototype.CreateSessionFromGroupAndClassroom = function(currentBlock, classrooms_line, groups_line, group_fallback) {
+    var classrooms = this.GetClassroomsFromLine(classrooms_line);
+    var groups = this.GetGroupsFromLine(groups_line);
 
     if(groups.prac != null || groups.sem != null) {
-        if(groups.sem != null) {
+        if(groups.sem && groups.sem.length != 0) {
             groups.sem.forEach(function(group) {
-                currentBlock.NewSession(group, classrooms.toString());
+                try {
+                    currentBlock.NewSession(group, classrooms.toString());
+                }
+                catch(err) {
+                    this.BlockInfo(currentBlock);
+                }
             });
         }
-        if(groups.prac != null) {
+        if(groups.prac && groups.prac.length != 0) {
             groups.prac.forEach(function(group) {
                 currentBlock.NewSession(group, classrooms.toString());
             });
         }
     }
     else {
-        currentBlock.NewSession(this.gradeCourse.theory_group, classrooms.toString());
+        currentBlock.NewSession(group_fallback ? group_fallback : null, classrooms.toString());
+    }
+};
+
+SessionsProvider.prototype.FillSession = function(currentBlock) {
+    var classroom_test = /([0-9]{2}[.]{0,1}[A-Za-z0-9][0-9]{2})/g; // If line is like PXXX: XX.XXX or SXXX: XX.XXX or SXXX - XX.XXX is aulagrup => 1
+    var group_test = /([SsPp]{1}[0-9]{3})/g;
+
+    var has_classroom = this.lastLine.match(classroom_test);
+    var has_group = this.lastLine.match(group_test);
+
+    var has_classroom_next = this.nextLine.match(classroom_test); // If line is like PXXX: XX.XXX or SXXX: XX.XXX or SXXX - XX.XXX is aulagrup => 1
+    var has_group_next = this.nextLine.match(group_test);
+
+    if(has_classroom) {
+        if(has_group) {
+            this.CreateSessionFromGroupAndClassroom(currentBlock, this.lastLine, this.lastLine);
+        }
+        else if(has_group_next && !has_classroom_next) {
+            this.CreateSessionFromGroupAndClassroom(currentBlock, this.lastLine, this.nextLine);
+        }
+        else {
+            this.CreateSessionFromGroupAndClassroom(currentBlock, this.lastLine, this.lastLine, this.gradeCourse.theory_group);
+        }
+    }
+    else {
+        if(has_group && has_group_next && !has_classroom_next) {
+            this.CreateSessionFromGroupAndClassroom(currentBlock, currentBlock.sessions[0].classroom, this.nextLine);
+        }
     }
 };
 
 SessionsProvider.prototype.FillHour = function(currentBlock) {
     //Tenim algo de hores
+    var hour_string = this.lastLine;
+
+    var hour_test = /([0-2]?[0-9][:|.][0-5][0-9])(?![0-9])/g;
+    var hours = hour_string.match(hour_test);
+
+    if(hours && hours.length != 0) {
+        var start = hours[0].split(':');
+        if(start.length == 1) { start = hours[0].split('.'); }
+
+        var start_date = currentBlock.data;
+        if(start.length == 2) {
+            start_date.setHours(start[0]);
+            start_date.setMinutes(start[1]);
+        }
+
+        currentBlock.SetPropertyToAll("timestamp_start", start_date.toUTCString());
+        if(hours.length > 1) {
+            var end = hours[1].split(':');
+            if(end.length == 1) { end = hours[1].split('.'); }
+
+            if(end.length == 2) {
+                var end_date = currentBlock.data;
+                end_date.setHours(end[0]);
+                end_date.setMinutes(end[1]);
+
+                currentBlock.SetPropertyToAll("timestamp_end", end_date.toUTCString());
+            }
+        }
+    }
+
     return;
 };
 
@@ -140,9 +206,7 @@ SessionsProvider.prototype.FillSubject = function(currentBlock) {
     var me = this;
     // Whe have now the subject's name.
     var subject_name = this.lastLine;
-
     currentBlock.SetPropertyToAll("timestamp_start", currentBlock.data.toUTCString());
-
     var block_sessions = currentBlock.GetSessions();
 
     if(currentBlock.usesDatabase) {
@@ -189,17 +253,32 @@ SessionsProvider.prototype.FillSubject = function(currentBlock) {
 
 SessionsProvider.prototype.LineType = function(line, nextLine) {
     var has_type = new RegExp("[ÀÁÈÉÍÏÒÓÚÜÑA-Z]{4,}"); // If line has at least 1 uppercase word is type => 0
-    var has_classroom = new RegExp("([0-9]{2}.[A-Za-z0-9][0-9]{2})"); // If line is like PXXX: XX.XXX or SXXX: XX.XXX or SXXX - XX.XXX is aulagrup => 1
+    var has_classroom = new RegExp("([0-9]{2}[.]{0,1}[A-Za-z0-9][0-9]{2})"); // If line is like PXXX: XX.XXX or SXXX: XX.XXX or SXXX - XX.XXX is aulagrup => 1
+    var has_group = new RegExp("[SsPp]{1}[0-9]{3}");
     var has_subject = new RegExp("((?:(?:[ÀÁÇÈÉÍÏÒÓÚÜÑA-Z]?[àáçèéíïòóúüña-z\\'\\s\\.\\-·]+)+)+[ÀÁÈÉÍÏÒÓÚÜÑA-Z0-9\\s]*)"); // This regex is a miracle understandable. Sorry xD NO FUNCIONA DEL TOT, de moment detecta l'subject bé però només pot contenir una paraula en majuscula i al final.
     var has_hour = new RegExp("([0-2]?[0-9][:|.][0-5][0-9])(?![0-9])"); // If line matches at least one hour XX:XX hora =>3
     var has_separator = new RegExp("[\\s|-]{4,}"); // If line matches at least one hour XX:XX hora =>3
 
     var result = line.match(has_type);
     if (result) {
+        if(nextLine) {
+            switch(this.LineType(nextLine)) {
+                case States.HAVE_TYPE:
+                {
+                    return States.HAVE_COMMENT;
+                }
+            }
+        }
+
         return States.HAVE_TYPE;
     }
 
     result = line.match(has_classroom);
+    if (result) {
+        return States.HAVE_SESSION;
+    }
+
+    result = line.match(has_group);
     if (result) {
         return States.HAVE_SESSION;
     }

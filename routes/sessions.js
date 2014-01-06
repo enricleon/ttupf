@@ -21,7 +21,11 @@ var EspaiAulaProvider = require('../providers/EspaiAulaProvider');
 exports.update = function(req, res) {
     res.render('simpleMessage', { title: 'Actualització de la llista de sessions', message: "La llista de sessions s'està actualitzant..." });
 
-    GradeCourse.find({}).populate('course grade period').exec(function (err, gradePeriods){
+    var query = {};
+    if(req.query.url) {
+        query.timetable_url = req.query.url;
+    }
+    GradeCourse.find(query).populate('course grade period').exec(function (err, gradePeriods){
         // here you are iterating through the users
         // but you don't know when it will finish
         console.log("Parsing sessions");

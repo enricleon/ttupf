@@ -33,7 +33,7 @@ Block.prototype = {
     SetPropertyToAll: function(property, value, override) {
         for(var i = 0; i < this.sessions.length; i++) {
             var element = this.sessions[i];
-            if(!(!override && element[property])) {
+            if(override || !element[property]) {
                 element[property] = value;
             }
         }
