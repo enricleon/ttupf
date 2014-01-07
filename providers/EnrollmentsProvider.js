@@ -60,10 +60,19 @@ EnrollmentsProvider.prototype.Start = function(espaiaula) {
 EnrollmentsProvider.prototype.GetEnrolled = function(enrollment, subject, user, callback) {
     var upsert_data = {};
 
-    if(enrollment.seminar_group) upsert_data.seminar_group = enrollment.seminar_group;
-    if(enrollment.theory_group) upsert_data.theory_group = enrollment.theory_group;
-    if(enrollment.practicum_group) upsert_data.practicum_group = enrollment.practicum_group;
-    else upsert_data.practicum_group = "P101";
+    upsert_data.practicum_group = "P101";
+    upsert_data.seminar_group = "S101";
+
+    if(enrollment.theory_group) {
+        upsert_data.theory_group = enrollment.theory_group;
+
+        if(enrollment.practicum_group) upsert_data.practicum_group = enrollment.practicum_group;
+        else upsert_data.practicum_group = "P" + upsert_data.theory_group + "01";
+
+        if(enrollment.seminar_group) upsert_data.seminar_group = enrollment.seminar_group;
+        else upsert_data.seminar_group = "S" + upsert_data.theory_group + "01";
+    }
+
 
     Enrollment.findOneAndUpdate({user: user, subject: subject}, upsert_data,{ upsert: true }, function(err, doc){
         if(err){
