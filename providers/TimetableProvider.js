@@ -19,7 +19,7 @@ var sessionsProvider;
 exports.GetHtmlFrom = function(gradeCourse) {
     var me = this;
 
-    sessionsProvider = new SessionsProvider(gradeCourse);
+    sessionsProvider = new SessionsProvider();
     request.get(gradeCourse.timetable_url, {encoding: "binary", timeout: 30000}, function (error, response, body) {
         if (!error) {
             attempts = 0;
@@ -38,23 +38,25 @@ exports.GetHtmlFrom = function(gradeCourse) {
     });
 }
 
-exports.ParseGradeCourse = function(body, timetable_url) {
+exports.ParseGradeCourse = function(body, gradeCourse) {
     var xml = body;
     var doc = new dom().parseFromString(xml);
 
     //Agafem les setmanes del dom
     var nodes = xpath.select("/html/body//table/tbody", doc);
 
-    console.log("\n---- URL: " + timetable_url);
+    console.log("\n---- URL: " + gradeCourse.timetable_url);
 
-    nodes.forEach(parseWeek);
+    nodes.forEach(function(node, index) {
+        parseWeek(node, index, gradeCourse);
+    });
 }
 
 var dies;
 var hores;
 var setmana;
 
-var parseWeek = function(item, index) {
+var parseWeek = function(item, index, gradeCourse) {
     var doc = new dom().parseFromString(item.toString());
 
     dies = xpath.select("//tr[2]/child::td[position() >= 2]/descendant::strong/text()", doc);
@@ -62,10 +64,12 @@ var parseWeek = function(item, index) {
     setmana = index;
 
     var dia_franja = xpath.select("//tr[position() >= 3]//td[not(position() = 1) and not(position() = 7) and not(position() = 13) and not(position() = 19) and not(position() = 25) and not(position() = 31) and not(position() = 37)]/div", doc);
-    dia_franja.forEach(parseDay);
+    dia_franja.forEach(function(item, index) {
+        parseDay(item, index, gradeCourse);
+    });
 }
 
-var parseDay = function(item, index) {
+var parseDay = function(item, index, gradeCourse) {
     try {
         var hora = hores[Math.floor(index/dies.length)].toString();
     }
@@ -77,7 +81,7 @@ var parseDay = function(item, index) {
     var hora = sessionsProvider.GetInitialTime(hora);
     var data = date.parse(dia + " " + hora);
 
-    var currentBlock = new Block(item, data);
+    var currentBlock = new Block(item, data, gradeCourse);
     currentBlock.usesDatabase = true;
 
     sessionsProvider.ParseBlock(currentBlock);

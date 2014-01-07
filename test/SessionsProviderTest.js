@@ -22,10 +22,6 @@ Vows.describe('Blocks').addBatch({
             var html = '<td><div >Taller de Música Electrònica<br><b>SEMINARI</b><br>S101 i S103: 54.008 i 54.009<br></div></td>';
             var date = Date.parse("18/04/2013 12:30");
 
-            var blockToTest = new Block(html, date);
-
-            blockToTest.finish = this.callback;
-
             var gei_c1_t2_g1 = new GradeCourse({
                 timetable_url: "http://www.upf.edu/esup/docencia/horaris1213/graus12_13/horaris_1213_GET_C2_T2_G1.html",
                 theory_group: "1",
@@ -34,7 +30,11 @@ Vows.describe('Blocks').addBatch({
                 course: null
             });
 
-            var sessionsProvider = new SessionsProvider(gei_c1_t2_g1);
+            var blockToTest = new Block(html, date, gei_c1_t2_g1);
+
+            blockToTest.finish = this.callback;
+
+            var sessionsProvider = new SessionsProvider();
             sessionsProvider.ParseBlock(blockToTest);
         },
         'should have two sessions': function(topic) {

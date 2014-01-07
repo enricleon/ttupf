@@ -8,13 +8,14 @@
 // Constructor
 var Sessio = require('../models/Session');
 
-var Block = module.exports = function(html, data) {
+var Block = module.exports = function(html, data, gradeCourse) {
     this.sessions = [];
     this.data = data;
     this.html = html;
     this.lines = [];
     this.currentLine = -1;
     this.usesDatabase = false;
+    this.gradeCourse = gradeCourse;
 };
 
 // properties and methods

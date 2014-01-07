@@ -34,11 +34,12 @@ var GradeCourse = new Schema({
 
 GradeCourse.methods.update = function(body){
     var timetable_url = this.timetable_url;
+    var me = this;
 
     if (body != undefined) {
         html2xhtml(body, function(err, html) {
             if(err) { console.log(err); } else {
-                timetableApi.ParseGradeCourse(html, timetable_url);
+                timetableApi.ParseGradeCourse(html, me);
             }
         });
     } else {

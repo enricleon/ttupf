@@ -25,8 +25,7 @@ var States = {
     END : -1
 }
 
-var SessionsProvider = module.exports = function(gradeCourse) {
-    this.gradeCourse = gradeCourse;
+var SessionsProvider = module.exports = function() {
     this.currentState = States.INITIAL;
     this.lastLine = "";
     this.nextLine = "";
@@ -49,6 +48,29 @@ SessionsProvider.prototype.BlockInfo = function(currentBlock) {
         console.log("---- Line: " + me.lastLine);
         console.log("---- NextLine: " + me.nextLine);
     });
+}
+
+SessionsProvider.prototype.GetTheoryGroup = function(group_string) {
+    // Look for a SXXX or PXXX as many as exists in the aulagrup line
+    var group_test_txy = new RegExp("(?:[Tt]{1}([0-9]{1})[AaBbCcDd]{1})|(?:[Tt]{1}[0-9]{1})|(?:[0-9]{1}[AaBbCcDd]{1})");
+    var group_test_tx = new RegExp("(?:[Tt]{1}[0-9]{1}[AaBbCcDd]{1})|(?:[Tt]{1}([0-9]{1}))|(?:[0-9]{1}[AaBbCcDd]{1})");
+    var group_test_xy = new RegExp("(?:[Tt]{1}[0-9]{1}[AaBbCcDd]{1})|(?:[Tt]{1}[0-9]{1})|(?:([0-9]{1})[AaBbCcDd]{1})");
+
+    var group_txy = group_test_txy.exec(group_string);
+    var group_tx = group_test_tx.exec(group_string);
+    var group_xy = group_test_xy.exec(group_string);
+
+    if(group_txy && group_txy.length > 0 && group_txy[1]) {
+        return group_txy[1];
+    }
+    if(group_tx && group_tx.length > 0 && group_tx[1]) {
+        return group_tx[1];
+    }
+    if(group_xy && group_xy.length > 0 && group_xy[1]) {
+        return group_xy[1];
+    }
+
+    return null;
 }
 
 // Looks for a group, and makes use of the $linetype to search that will be like {0 => Aulagrup, 1 => Tipus}
@@ -132,7 +154,9 @@ SessionsProvider.prototype.FillSession = function(currentBlock) {
             this.CreateSessionFromGroupAndClassroom(currentBlock, this.lastLine, this.nextLine);
         }
         else {
-            this.CreateSessionFromGroupAndClassroom(currentBlock, this.lastLine, this.lastLine, this.gradeCourse.theory_group);
+            var theory_group = this.GetTheoryGroup(this.lastLine);
+
+            this.CreateSessionFromGroupAndClassroom(currentBlock, this.lastLine, this.lastLine, theory_group || currentBlock.gradeCourse.theory_group);
         }
     }
     else {
