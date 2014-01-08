@@ -13,6 +13,8 @@ var Course = require('../models/Course');
 var Grade = require('../models/Grade');
 var Period = require('../models/Period');
 var Enrollment = require('../models/Enrollment');
+var Session = require('../models/Session');
+var Subject = require('../models/Subject');
 
 var date = require('../public/js/date');
 
@@ -72,6 +74,12 @@ exports.show = function(req, res){
             res.redirect("/users/profile");
         }
     });
+};
+
+exports.deleteAll = function(req, res){
+    res.render('simpleMessage', { title: 'Eliminant totes les sessions', message: "La llista de sessions s'està esborrant..." });
+    Session.remove({}, function(err) {});
+    Subject.update({}, {sessions: []}, {multi: true}, function(err) {});
 };
 
 exports.config = function(req, res){

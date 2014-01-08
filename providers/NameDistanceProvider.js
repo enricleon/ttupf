@@ -1,9 +1,26 @@
+var natural = require('natural');
 var distance = require('distance');
+
+var calculateDistance = function(string1, string2) {
+    if(string2 == "Sistemes Multimedia" && string1.indexOf("Sistemes") != -1) {
+        console.log("");
+    }
+
+    var lev = distance.levenshtein(string1, string2);
+
+    var length = string1.length > string2.length ? string1.split(' ').length : string2.split(' ').length;
+
+    if(length <= lev) {
+        return lev - length;
+    }
+
+    return lev;
+}
 
 var subjects_base;
 var pushToDistanceDictionary = function(distance_dictionary, name, callback) {
     subjects_base.forEach(function(subject) {
-        distance_dictionary.push({name: subject.name, distance: distance.levenshtein(subject.name, name), id: subject._id});
+        distance_dictionary.push({name: subject.name, distance: calculateDistance(subject.name, name), id: subject._id});
     });
 
     callback(distance_dictionary);
@@ -14,7 +31,7 @@ exports.DistanceDictionary = function(name, names_array, callback) {
 
     if(names_array) {
         Object.keys(names_array).forEach(function(name_item) {
-            distance_dictionary.push({name: name_item, distance: distance.levenshtein(AccentsTidy(name_item), AccentsTidy(name))});
+            distance_dictionary.push({name: name_item, distance: calculateDistance(AccentsTidy(name_item), AccentsTidy(name))});
         });
         return distance_dictionary;
     }
@@ -58,17 +75,15 @@ exports.LowerDistance = function(distance_dictionary) {
 
 var AccentsTidy = function(s){
     var r=s.toLowerCase();
-    r = r.replace(new RegExp("\\s", 'g'),"");
     r = r.replace(new RegExp("[àáâãäå]", 'g'),"a");
     r = r.replace(new RegExp("æ", 'g'),"ae");
     r = r.replace(new RegExp("ç", 'g'),"c");
     r = r.replace(new RegExp("[èéêë]", 'g'),"e");
-    r = r.replace(new RegExp("[ìíîï]", 'g'),"i");
+    r = r.replace(new RegExp("[ìíî]", 'g'),"i");
     r = r.replace(new RegExp("ñ", 'g'),"n");
     r = r.replace(new RegExp("[òóôõö]", 'g'),"o");
     r = r.replace(new RegExp("œ", 'g'),"oe");
     r = r.replace(new RegExp("[ùúûü]", 'g'),"u");
     r = r.replace(new RegExp("[ýÿ]", 'g'),"y");
-    r = r.replace(new RegExp("\\W", 'g'),"");
     return r;
 };

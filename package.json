@@ -17,6 +17,7 @@
     "connect-ensure-login": "*",
     "node-html-encoder": "*",
     "distance": "*",
+    "natural": "*",
     "async": "*",
     "express-restify-mongoose": "*",
     "oauth2orize": "*",

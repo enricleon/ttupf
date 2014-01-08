@@ -109,8 +109,13 @@ module.exports = function (app) {
 
     app.get('/subjects/update', auth, subjects.update);
 
+    app.get('/subjects/removeOne', auth, subjects.removeOne);
+
     // This triggers the UPF timetable parser
     app.get('/sessions/update', auth, sessions.update);
+
+    // This triggers the UPF timetable parser
+    app.get('/sessions/deleteAll', auth, sessions.deleteAll);
 
     /**
      * Timetable routes

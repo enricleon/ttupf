@@ -26,3 +26,9 @@ exports.update = function (req, res) {
     });
 }
 
+exports.removeOne = function(req, res) {
+    res.render('simpleMessage', { title: 'Removing subject', message: "Esborrant l'assignatura..." });
+    Subject.findOne({_id: ObjectId(req.query._id)}, function(err, doc) {
+        doc.remove();
+    });
+}

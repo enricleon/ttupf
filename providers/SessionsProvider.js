@@ -245,7 +245,7 @@ SessionsProvider.prototype.FillSubject = function(currentBlock) {
                     NameDistanceProvider.DistanceDictionary(subject_name, null, function(distance_dictionary) {
                         var lower_distance = NameDistanceProvider.LowerDistance(distance_dictionary);
 
-                        if(lower_distance.distance >= 12) {
+                        if(lower_distance.distance > 5) {
                             lower_distance.name = subject_name;
                         }
                         Subject.findOneAndUpdate({name: lower_distance.name},{$addToSet: {sessions: session_doc}},{ upsert: true }, function(err, subject_doc){
