@@ -60,7 +60,7 @@ SubjectsProvider.prototype.UpdateSubjectsProgram = function(program, grade_code)
             var lower_distance = NameDistanceProvider.LowerDistance(distance_dictionary);
             var name = subject_name;
 
-            if(lower_distance.distance != -1 && lower_distance.distance <= 2) {
+            if(lower_distance.distance != -1 && lower_distance.distance >= 0.80) {
                 name = lower_distance.name;
             }
 

@@ -1,20 +1,44 @@
 var natural = require('natural');
 var distance = require('distance');
 
+function stringToArray(sentence) {
+    var words = sentence.replace(/\b(?:a|de|del|per|i|en|pel|amb|sobre|la|les|el|[.,?!;()"'-])\b\s/gi, "")
+            .replace(/\s+/g, " ")
+            .toLowerCase()
+            .split(" ");
+
+    return words;
+}
+
 var calculateDistance = function(string1, string2) {
-    if(string2 == "Sistemes Multimedia" && string1.indexOf("Sistemes") != -1) {
-        console.log("");
-    }
+    var longest = string1.length > string2.length ? string1.length : string2.length;
+    var lev = 1 - (distance.levenshtein(string1, string2) / longest);
 
-    var lev = distance.levenshtein(string1, string2);
+    string1 = stringToArray(string1);
+    string2 = stringToArray(string2);
 
-    var length = string1.length > string2.length ? string1.split(' ').length : string2.split(' ').length;
+    var equals = {};
 
-    if(length <= lev) {
-        return lev - length;
-    }
+    string1.forEach(function (word) {
+        if(!equals[word + "1"]) {
+            string2.forEach(function (word2) {
+                if(!equals[word2 + "2"]) {
+                    if(distance.levenshtein(word, word2) < 3) {
+                        equals[word2 + "2"] = true;
+                        equals[word + "1"] = true;
+                    }
+                }
+            });
+        }
+    });
 
-    return lev;
+    var total_words = string1.length > string2.length ? string1.length : string2.length;
+    var equal_words = Object.keys(equals).length / 2;
+
+    var success_percent = equal_words / total_words;
+    var final_percent = (success_percent + lev) / 2;
+
+    return final_percent;
 }
 
 var subjects_base;
@@ -63,7 +87,7 @@ exports.LowerDistance = function(distance_dictionary) {
     var current_match = distance_dictionary[0];
 
     distance_dictionary.forEach(function(subject) {
-        if(subject.distance < lower_distance) {
+        if(subject.distance > lower_distance) {
             lower_distance = subject.distance;
             current_match = subject;
 

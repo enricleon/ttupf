@@ -103,7 +103,7 @@ EnrollmentsProvider.prototype.FinishEnrollments = function() {
                             if(distance_dictionary) {
                                 var lower_distance = NameDistanceProvider.LowerDistance(distance_dictionary);
 
-                                if(lower_distance.distance < 3) {
+                                if(lower_distance.distance < 0.60) {
                                     Subject.findOneAndUpdate({name: lower_distance.name}, {$addToSet: { code: enrollment.subject_code}}, { upsert: true }, function(err, subject_found){
                                         if(!err && subject_found){
                                             me.GetEnrolled(enrollment, subject_found, me.user, callback);
