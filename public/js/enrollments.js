@@ -13,7 +13,7 @@ var ok_enrollment_click = function() {
 
     var current_enrollment_id = $(current_enrollment).find(".enrollment_id").attr("value");
     var ce_seminar_group = $(current_enrollment).find(".editable[name=\"seminar_group\"]").val();
-    var ce_practicum_group = $(current_enrollment).find(".editable[name=\"practicum_group\"]").attr("value");
+    var ce_practicum_group = $(current_enrollment).find(".editable[name=\"practicum_group\"]").val();
 
     $(".edit_enrollment").each(function(){
         $(this).show();
