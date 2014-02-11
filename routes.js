@@ -107,6 +107,8 @@ module.exports = function (app) {
         })(req, res, next);
     };
 
+    app.get('/sessions/ical', ensureLoggedIn('/login'), sessions.ical);
+
     app.get('/subjects/update', auth, subjects.update);
 
     app.get('/subjects/removeOne', auth, subjects.removeOne);

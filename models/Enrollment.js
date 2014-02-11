@@ -51,6 +51,35 @@ Enrollment.statics.GetSessionsByUserForDate = function(user, target_d, num_days,
     });
 }
 
+Enrollment.statics.GetSessionsByUser = function(user, num_days, callback) {
+    this.find({user: user}).populate("subject").exec(function(err, docs){
+        var sessions = [];
+        var count = docs.length;
+        if(count == 0) {
+            callback("No hi ha assignatures configurades.", null);
+        }
+        docs.forEach(function(enrollment) {
+            Session.find({_id: {$in: enrollment.subject.sessions}, group: {$in: [enrollment.theory_group || "", enrollment.practicum_group || "", enrollment.seminar_group || ""]}}).exec(function(err, sess_docs) {
+                if(!err && sess_docs) {
+                    //if(doc.group == enrollment.theory_group || doc.group == enrollment.practicum_group || doc.group == enrollment.seminar_group) {
+                    for(var i = 0; i < sess_docs.length; i++) {
+                        var session = sess_docs[i].toObject();
+                        delete session._id;
+                        session.subject = enrollment.subject.name;
+                        console.log(JSON.stringify(session));
+                        sessions.push(session);
+                    }
+                    //}
+                }
+                count--;
+                if(count == 0) {
+                    callback(null, sessions);
+                }
+            });
+        });
+    });
+}
+
 var Enrollment = mongoose.model('Enrollment', Enrollment);
 
 module.exports = Enrollment;

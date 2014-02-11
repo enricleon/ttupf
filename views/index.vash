@@ -24,7 +24,8 @@
                     <h2>@model.title</h2>
 
                     <p>Timetable UPF és un servei de personalització d'horaris per als estudiants de l'Escola Superior Politècnica de la Universitat Pompeu Fabra (UPF).</p>
-                    <p>Un cop et registris podràs configurar el teu horari amb les assignatures que estàs cursant (de diversos cursos inclús), indicant els grups de teoria, pràctiques i seminaris. Quan estigui tot configurat veuràs només les classes que et toquen a tu, ja siguin de teoria, de pràctiques o de seminaris.</p>
+                    <p>Un cop t'hagis <a href='users/new'>registrat</a> podras sincronitzar el teu horari amb l'espai aula, i d'aquesta manera et podrem guardar les assignatures que fas i els teus grups de pràctiques i seminari de cada assignatura.</p>
+                    <p>Si els grups de l'espai aula no et van bé, els podràs editar manualment a la secció <a href='/users/profile'>El meu compte</a> on també podràs descarregar-te el fitxer iCal per a guardar-te l'horari al google calendar.</p>
                 </div>
             </div>
         </div>

@@ -19,6 +19,7 @@ var Subject = require('../models/Subject');
 var date = require('../public/js/date');
 
 var EspaiAulaProvider = require('../providers/EspaiAulaProvider');
+var GoogleCalendarProvider = require('../providers/GoogleCalendarProvider');
 
 exports.update = function(req, res) {
     res.render('simpleMessage', { title: 'Actualització de la llista de sessions', message: "La llista de sessions s'està actualitzant..." });
@@ -68,6 +69,20 @@ exports.show = function(req, res){
                     return dateA > dateB;
                 });
                 res.render('sessions/index', {title: "Horari", user: req.user, date: target_day, sessions: sessions});
+            });
+        }
+        else {
+            res.redirect("/users/profile");
+        }
+    });
+};
+
+exports.ical = function(req, res){
+    req.user.HasEnrollments(function(err, has_enrollments) {
+        if(!err && has_enrollments) {
+            var calendar = new GoogleCalendarProvider(req.user);
+            calendar.fillCalendar(function(cal) {
+                cal.serve(res);
             });
         }
         else {

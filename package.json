@@ -25,6 +25,7 @@
     "passport-http": "*",
     "passport-oauth2-client-password": "*",
     "vash": "*",
-    "connect-redis": "*"
+    "connect-redis": "*",
+    "ical-generator": "*"
   }
 }
