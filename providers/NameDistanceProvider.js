@@ -41,9 +41,8 @@ var calculateDistance = function(string1, string2) {
     return final_percent;
 }
 
-var subjects_base;
-var pushToDistanceDictionary = function(distance_dictionary, name, callback) {
-    subjects_base.forEach(function(subject) {
+var pushToDistanceDictionary = function(subjects, distance_dictionary, name, callback) {
+    subjects.forEach(function(subject) {
         distance_dictionary.push({name: subject.name, distance: calculateDistance(subject.name, name), id: subject._id});
     });
 
@@ -61,20 +60,14 @@ exports.DistanceDictionary = function(name, names_array, callback) {
     }
     else {
         var Subject = require("../models/Subject.js");
-        if(!subjects_base) {
-            Subject.find({}).exec(function(err, subjects) {
-                if(!err && subjects) {
-                    subjects_base = subjects;
-                    pushToDistanceDictionary(distance_dictionary, name, callback);
-                }
-                else{
-                    callback(null);
-                }
-            });
-        }
-        else {
-            pushToDistanceDictionary(distance_dictionary, name, callback);
-        }
+        Subject.find({}).exec(function(err, subjects) {
+            if(!err && subjects) {
+                pushToDistanceDictionary(subjects, distance_dictionary, name, callback);
+            }
+            else{
+                callback(null);
+            }
+        });
     }
 };
 
@@ -90,7 +83,6 @@ exports.LowerDistance = function(distance_dictionary) {
         if(subject.distance > lower_distance) {
             lower_distance = subject.distance;
             current_match = subject;
-
         }
     });
 

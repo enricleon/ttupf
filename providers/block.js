@@ -41,5 +41,11 @@ Block.prototype = {
     },
     Reset: function() {
         this.sessions = [];
+    },
+    FinishSessions: function() {
+        for(var i = 0; i < this.sessions.length; i++) {
+            var element = this.sessions[i];
+            element["finished"] = true;
+        }
     }
 };

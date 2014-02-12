@@ -98,7 +98,7 @@ SessionsProvider.prototype.GetClassroomsFromLine = function(classroom_string) {
 
     var classrooms = classroom_string.match(classroom_test);
 
-    return classrooms;
+    return classrooms || "";
 };
 
 SessionsProvider.prototype.GetInitialTime = function(hour_string) {
@@ -161,7 +161,12 @@ SessionsProvider.prototype.FillSession = function(currentBlock) {
     }
     else {
         if(has_group && has_group_next && !has_classroom_next) {
-            this.CreateSessionFromGroupAndClassroom(currentBlock, currentBlock.sessions[0].classroom, this.nextLine);
+            if(!currentBlock.sessions || currentBlock.sessions.length == 0) {
+                this.CreateSessionFromGroupAndClassroom(currentBlock, "", this.nextLine);
+            }
+            else {
+                this.CreateSessionFromGroupAndClassroom(currentBlock, currentBlock.sessions[0].classroom, this.nextLine);
+            }
         }
     }
 };
@@ -216,27 +221,26 @@ SessionsProvider.prototype.FillComment = function(currentBlock) {
     currentBlock.SetPropertyToAll("comment", this.lastLine);
 };
 
-SessionsProvider.prototype.FinishSubject = function(currentBlock, subject_name) {
-    if(subject_name) {
-        currentBlock.SetPropertyToAll("subject_name", subject_name);
-    }
-
+SessionsProvider.prototype.FinishSubject = function(currentBlock) {
     if(currentBlock.currentLine == currentBlock.lines.length - 1 && currentBlock.finish) {
         currentBlock.finish(null, currentBlock);
     }
 };
 
 SessionsProvider.prototype.FillSubject = function(currentBlock) {
-    var me = this;
-    // Whe have now the subject's name.
-    var subject_name = this.lastLine;
     currentBlock.SetPropertyToAll("timestamp_start", currentBlock.data.toUTCString());
-    var block_sessions = currentBlock.GetSessions();
+    currentBlock.SetPropertyToAll("subject_name", this.lastLine);
+
+    this.SaveBlock(currentBlock);
+};
+
+SessionsProvider.prototype.SaveBlock = function(currentBlock) {
+    var me = this;
 
     if(currentBlock.usesDatabase) {
-        block_sessions.forEach(function(session) {
+        currentBlock.sessions.forEach(function(session) {
+            var subject_name = session.subject_name;
             var upsertData = session.toObject();
-
             // Delete the _id property, otherwise Mongo will return a "Mod on _id not allowed" error
             delete upsertData._id;
 
@@ -250,26 +254,26 @@ SessionsProvider.prototype.FillSubject = function(currentBlock) {
                         }
                         Subject.findOneAndUpdate({name: lower_distance.name},{$addToSet: {sessions: session_doc}},{ upsert: true }, function(err, subject_doc){
                             if(err){
-                                me.FinishSubject(currentBlock, subject_name);
+                                me.FinishSubject(currentBlock);
                                 console.log(err);
                             }
                             else {
-                                me.FinishSubject(currentBlock, lower_distance.name);
-                                session_doc.subject = lower_distance.id;
+                                me.FinishSubject(currentBlock);
+                                session_doc.subject = subject_doc.id;
                                 session_doc.save();
                             }
                         });
                     });
                 }
                 else {
-                    me.FinishSubject(currentBlock, subject_name);
+                    me.FinishSubject(currentBlock);
                     console.log(err);
                 }
             });
         });
     }
     else {
-        me.FinishSubject(currentBlock, subject_name);
+        me.FinishSubject(currentBlock);
     }
 
     this.currentState = States.INITIAL;
@@ -464,7 +468,7 @@ SessionsProvider.prototype.CleanLine = function(line) {
     var content = line.toString();
     content = content.replace(/(^\s*)|(\s*$)/gi,"");
     content = content.replace(/[ ]{2,}/gi," ");
-    content = content.replace(/\n /,"\n");
+    content = content.replace(/\n /," ");
     content = content.replace(/\n/,"");
 
     return content;

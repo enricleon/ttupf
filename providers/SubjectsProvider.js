@@ -33,7 +33,7 @@ SubjectsProvider.prototype.CleanLine = function(line) {
     var content = line.toString();
     content = content.replace(/(^\s*)|(\s*$)/gi,"");
     content = content.replace(/[ ]{2,}/gi," ");
-    content = content.replace(/\n /,"\n");
+    content = content.replace(/\n /," ");
     content = content.replace(/\n/,"");
 
     return content;

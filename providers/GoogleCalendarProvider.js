@@ -20,7 +20,7 @@ GoogleCalendarProvider.prototype.fillCalendar = function(callback) {
             cal.addEvent({
                 start: session.timestamp_start,
                 end: session.timestamp_end || end,
-                summary: session.subject,
+                summary: session.subject && session.subject.name ? session.subject.name : "Unknown Subject",
                 description: session.type,
                 location: session.classroom
             });

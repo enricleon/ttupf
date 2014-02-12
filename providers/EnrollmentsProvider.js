@@ -103,7 +103,7 @@ EnrollmentsProvider.prototype.FinishEnrollments = function() {
                             if(distance_dictionary) {
                                 var lower_distance = NameDistanceProvider.LowerDistance(distance_dictionary);
 
-                                if(lower_distance.distance < 0.60) {
+                                if(lower_distance.distance >= 0.80) {
                                     Subject.findOneAndUpdate({name: lower_distance.name}, {$addToSet: { code: enrollment.subject_code}}, { upsert: true }, function(err, subject_found){
                                         if(!err && subject_found){
                                             me.GetEnrolled(enrollment, subject_found, me.user, callback);
@@ -134,7 +134,7 @@ EnrollmentsProvider.prototype.ProcessState = function(line) {
     var content = line.toString();
     content = content.replace(/(^\s*)|(\s*$)/gi,"");
     content = content.replace(/[ ]{2,}/gi," ");
-    content = content.replace(/\n /,"\n");
+    content = content.replace(/\n /," ");
     content = content.replace(/\n/,"");
 
     var line_decoded = content;
@@ -174,7 +174,7 @@ EnrollmentsProvider.prototype.LineType = function(line) {
     var content = line.toString();
     content = content.replace(/(^\s*)|(\s*$)/gi,"");
     content = content.replace(/[ ]{2,}/gi," ");
-    content = content.replace(/\n /,"\n");
+    content = content.replace(/\n /," ");
     content = content.replace(/\n/,"");
 
     var line_decoded = content;
