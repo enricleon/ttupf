@@ -13,10 +13,17 @@ $(document).ready(function() {
         $(this).parents("li").attr("class", "active");
         switch($(this).attr("id")) {
             case "enrollments_tab":
+                $("#calendar").hide();
                 $("#espai_aula").hide();
                 $("#enrollments").show();
                 break;
+            case "calendar_tab":
+                $("#calendar").show();
+                $("#espai_aula").hide();
+                $("#enrollments").hide();
+                break;
             case "espai_aula_tab":
+                $("#calendar").hide();
                 $("#enrollments").hide();
                 $("#espai_aula").show();
                 break;

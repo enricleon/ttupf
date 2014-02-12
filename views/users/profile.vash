@@ -16,6 +16,7 @@
                 @if(model.enrollments && model.enrollments.length > 0) {
                     <li class="active"><a id="enrollments_tab" class="profile_tab">Assignatures i grups</a></li>
                     <li><a id="espai_aula_tab" class="profile_tab">Espai Aula</a></li>
+                    <li><a id="calendar_tab" class="profile_tab">Google Calendar</a></li>
                 } else {
                     <li class="active"><a id="espai_aula_tab" class="profile_tab">Espai Aula</a></li>
                 }
@@ -42,6 +43,11 @@
                         </form>
                     </div>
                 </div>
+            </div>
+            <div class="container" id="calendar" style="display: none;">
+                <p>Descarrega't el calendari de les teves classes en format iCal compatible amb el Google Calendar i altres serveis:</p>
+                <p>Un cop descarregat hauras d'accedir al google calendar i importar el fitxer que t'has descarregat.</p>
+                <a class="btn btn-info" href="/sessions/ical">Fitxer iCal</a>
             </div>
             @if(model.enrollments && model.enrollments.length > 0) {
                 <div id="enrollments">
