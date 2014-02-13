@@ -17,10 +17,12 @@ GoogleCalendarProvider.prototype.fillCalendar = function(callback) {
             var end = new Date(session.timestamp_start.getTime());
             end.setHours(end.getHours() + 2);
 
+			var session_name = session.subject && session.subject.name ? session.subject.name : "Unknown Subject";
+			
             cal.addEvent({
                 start: session.timestamp_start,
                 end: session.timestamp_end || end,
-                summary: session.subject && session.subject.name ? session.subject.name : "Unknown Subject" + ": " + session.type + " " + session.classroom,
+                summary: session_name + ": " + session.type + " " + session.classroom,
                 description: session.comment,
                 location: session.classroom
             });
