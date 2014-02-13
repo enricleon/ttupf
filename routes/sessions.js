@@ -82,6 +82,7 @@ exports.ical = function(req, res){
         if(!err && has_enrollments) {
             var calendar = new GoogleCalendarProvider(req.user);
             calendar.fillCalendar(function(cal) {
+                res.charset = 'utf-8';
                 cal.serve(res);
             });
         }
