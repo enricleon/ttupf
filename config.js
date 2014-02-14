@@ -13,7 +13,7 @@ var Grade = require('./models/Grade');
 var Period = require('./models/Period');
 
 var Config = module.exports = function() {
-    this.production = false;
+    this.production = true;
     this.grades = {};
     this.courses = {};
     this.periods = {};
