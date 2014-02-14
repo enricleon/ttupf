@@ -5,3 +5,9 @@ node_modules/*
 /node_modules/time/Makefile
 /node_modules/time/binding.gyp
 /node_modules/time/wscript
+/node_modules/time/.jshintrc
+/node_modules/time/.npmignore
+/node_modules/time/.travis.yml
+/node_modules/time/LICENSE
+/node_modules/time/package.json
+/node_modules/time/README.md
