@@ -1,1 +1,7 @@
 /.idea/workspace.xml
+node_modules/*
+!node_modules/time
+
+/node_modules/time/Makefile
+/node_modules/time/binding.gyp
+/node_modules/time/wscript
