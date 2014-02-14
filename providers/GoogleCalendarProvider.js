@@ -1,4 +1,5 @@
 var ical = require('ical-generator');
+var time = require('time');
 var Enrollment = require('../models/Enrollment');
 
 var GoogleCalendarProvider = module.exports = function(user) {
@@ -7,6 +8,7 @@ var GoogleCalendarProvider = module.exports = function(user) {
 };
 
 GoogleCalendarProvider.prototype.fillCalendar = function(callback) {
+    time.tzset('Europe/Amsterdam');
     var user = this.currentUser;
     var cal = this.cal;
 
@@ -14,11 +16,11 @@ GoogleCalendarProvider.prototype.fillCalendar = function(callback) {
         for(var i = 0; i < sessions.length; i++) {
             var session = sessions[i];
 
-            var end = new Date(session.timestamp_start.getTime());
+            var end = new time.Date(session.timestamp_start.getTime());
             end.setHours(end.getHours() + 2);
 
 			var session_name = session.subject && session.subject.name ? session.subject.name : "Unknown Subject";
-			
+
             cal.addEvent({
                 start: session.timestamp_start,
                 end: session.timestamp_end || end,

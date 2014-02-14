@@ -9,7 +9,7 @@ var request = require("request"),
     xpath = require('xpath'),
     dom = require('xmldom').DOMParser,
     Block = require('./Block'),
-    date = require('./../public/js/date'),
+    time = require('time'),
     SessionsProvider = require('./SessionsProvider');
 
 var attempts = 0;
@@ -79,9 +79,16 @@ var parseDay = function(item, index, gradeCourse) {
     var dia = dies[index % dies.length].toString();
 
     var hora = sessionsProvider.GetInitialTime(hora);
-    var data = date.parse(dia + " " + hora);
 
-    var currentBlock = new Block(item, data, gradeCourse);
+    var day = dia.split("/")[0];
+    var month = dia.split("/")[1] - 1;
+    var year = dia.split("/")[2];
+    var hour = hora.split(":")[0];
+    var minute = hora.split(":")[1];
+
+    var _date = new time.Date(year, month, day, hour, minute, 'Europe/Amsterdam');
+
+    var currentBlock = new Block(item, _date, gradeCourse);
     currentBlock.usesDatabase = true;
 
     sessionsProvider.ParseBlock(currentBlock);

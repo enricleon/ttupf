@@ -10,7 +10,8 @@ var xpath = require('xpath'),
     dom = require('xmldom').DOMParser,
     Grade = require('../models/Grade'),
     Subject = require('../models/Subject'),
-    Session = require('../models/Session');
+    Session = require('../models/Session'),
+    time = require('time');
 
 var NameDistanceProvider = require('./NameDistanceProvider');
 
@@ -182,7 +183,7 @@ SessionsProvider.prototype.FillHour = function(currentBlock) {
         var start = hours[0].split(':');
         if(start.length == 1) { start = hours[0].split('.'); }
 
-        var start_date = currentBlock.data;
+        var start_date = new time.Date(currentBlock.data.getTime());
         if(start.length == 2) {
             start_date.setHours(start[0]);
             start_date.setMinutes(start[1]);
@@ -194,7 +195,7 @@ SessionsProvider.prototype.FillHour = function(currentBlock) {
             if(end.length == 1) { end = hours[1].split('.'); }
 
             if(end.length == 2) {
-                var end_date = currentBlock.data;
+                var end_date = new time.Date(currentBlock.data.getTime());
                 end_date.setHours(end[0]);
                 end_date.setMinutes(end[1]);
 
