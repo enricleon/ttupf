@@ -28,8 +28,8 @@ GoogleCalendarProvider.prototype.fillCalendar = function(callback) {
 
             var end = moment.tz(end, "UTC").tz("Europe/Amsterdam");
 
-            var final_start = new Date(start.format("YYYY"), start.format("MM"), start.format("DD"), start.format("HH"), start.format("mm"));
-            var final_end = new Date(end.format("YYYY"), end.format("MM"), end.format("DD"), end.format("HH"), end.format("mm"));
+            var final_start = new Date(start.format("YYYY"), start.format("MM") - 1, start.format("DD"), start.format("HH"), start.format("mm"));
+            var final_end = new Date(end.format("YYYY"), end.format("MM") - 1, end.format("DD"), end.format("HH"), end.format("mm"));
 
 			var session_name = session.subject && session.subject.name ? session.subject.name : "Unknown Subject";
 
