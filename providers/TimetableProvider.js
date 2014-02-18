@@ -9,7 +9,7 @@ var request = require("request"),
     xpath = require('xpath'),
     dom = require('xmldom').DOMParser,
     Block = require('./Block'),
-    time = require('time'),
+    moment = require('moment-timezone'),
     SessionsProvider = require('./SessionsProvider');
 
 var attempts = 0;
@@ -86,7 +86,7 @@ var parseDay = function(item, index, gradeCourse) {
     var hour = hora.split(":")[0];
     var minute = hora.split(":")[1];
 
-    var _date = new time.Date(year, month, day, hour, minute, 'Europe/Amsterdam');
+    var _date = moment.tz([year, month, day, hour, minute], 'Europe/Amsterdam');
 
     var currentBlock = new Block(item, _date, gradeCourse);
     currentBlock.usesDatabase = true;

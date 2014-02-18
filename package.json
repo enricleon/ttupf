@@ -26,6 +26,7 @@
     "passport-oauth2-client-password": "*",
     "vash": "*",
     "connect-redis": "*",
-    "ical-generator": "*"
+    "ical-generator": "*",
+    "moment-timezone": "*"
   }
 }

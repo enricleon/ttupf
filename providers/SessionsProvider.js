@@ -11,7 +11,7 @@ var xpath = require('xpath'),
     Grade = require('../models/Grade'),
     Subject = require('../models/Subject'),
     Session = require('../models/Session'),
-    time = require('time');
+    moment = require('moment-timezone');
 
 var NameDistanceProvider = require('./NameDistanceProvider');
 
@@ -183,23 +183,23 @@ SessionsProvider.prototype.FillHour = function(currentBlock) {
         var start = hours[0].split(':');
         if(start.length == 1) { start = hours[0].split('.'); }
 
-        var start_date = new time.Date(currentBlock.data.getTime());
+        var start_todate = currentBlock.data.toDate();
+        var start_date = moment(currentBlock.data);
+
         if(start.length == 2) {
-            start_date.setHours(start[0]);
-            start_date.setMinutes(start[1]);
+            start_date = moment.tz([start_todate.year, start_todate.month, start_todate.day, start[0], start[1]], 'Europe/Amsterdam');
         }
 
-        currentBlock.SetPropertyToAll("timestamp_start", start_date.toUTCString());
+        currentBlock.SetPropertyToAll("timestamp_start", start_date.toDate().toUTCString());
         if(hours.length > 1) {
             var end = hours[1].split(':');
             if(end.length == 1) { end = hours[1].split('.'); }
 
             if(end.length == 2) {
-                var end_date = new time.Date(currentBlock.data.getTime());
-                end_date.setHours(end[0]);
-                end_date.setMinutes(end[1]);
+                var end_todate = currentBlock.data.toDate();
+                var end_date = moment.tz([end_todate.year, end_todate.month, end_todate.day, start[0], start[1]], 'Europe/Amsterdam');
 
-                currentBlock.SetPropertyToAll("timestamp_end", end_date.toUTCString());
+                currentBlock.SetPropertyToAll("timestamp_end", end_date.toDate().toUTCString());
             }
         }
     }
@@ -229,7 +229,7 @@ SessionsProvider.prototype.FinishSubject = function(currentBlock) {
 };
 
 SessionsProvider.prototype.FillSubject = function(currentBlock) {
-    currentBlock.SetPropertyToAll("timestamp_start", currentBlock.data.toUTCString());
+    currentBlock.SetPropertyToAll("timestamp_start", currentBlock.data.toDate().toUTCString());
     currentBlock.SetPropertyToAll("subject_name", this.lastLine);
 
     this.SaveBlock(currentBlock);
