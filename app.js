@@ -7,6 +7,7 @@
         mongoose = require('mongoose'),
         http = require('http'),
         path = require('path'),
+        fs = require('fs'),
         passport = require('passport'),
         Config = require('./config'),
         config = new Config(),
@@ -135,7 +136,6 @@
     require('./routes')(app);
 
     // We read the Configuration file:
-    fs = require('fs');
     fs.readFile('./config/Configuration.xml', 'utf8', function (err,data) {
         if (err) {
             console.log(err);

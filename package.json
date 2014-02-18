@@ -6,7 +6,7 @@
     "express": "3.1.0",
     "jade": "*",
 	"mongodb": "*",
-	"mongoose": "*",
+	"mongoose": "3.8.5",
     "request": "*",
     "vows": "*",
     "xmldom": "*",
