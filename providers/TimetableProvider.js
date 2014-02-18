@@ -81,7 +81,7 @@ var parseDay = function(item, index, gradeCourse) {
     var hora = sessionsProvider.GetInitialTime(hora);
 
     var day = dia.split("/")[0];
-    var month = dia.split("/")[1] - 1;
+    var month = dia.split("/")[1];
     var year = dia.split("/")[2];
     var hour = hora.split(":")[0];
     var minute = hora.split(":")[1];
