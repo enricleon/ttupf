@@ -70,7 +70,7 @@ EspaiAulaProvider.prototype.GetEspaiAula = function(callback) {
         encoding: "binary",
         form: {
             OPERACIO: "ESTUDIANT",
-            ANYACADEMIC: "2013",
+            ANYACADEMIC: "2015",
             cg_opciomenu: "Espai Aula"
         }
     }, function(error, response, body) {

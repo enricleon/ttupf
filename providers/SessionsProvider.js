@@ -254,21 +254,23 @@ SessionsProvider.prototype.SaveBlock = function(currentBlock) {
                             lower_distance.name = subject_name;
                         }
                         Subject.findOneAndUpdate({name: lower_distance.name},{$addToSet: {sessions: session_doc}},{ upsert: true }, function(err, subject_doc){
-                            if(err){
-                                me.FinishSubject(currentBlock);
-                                console.log(err);
-                            }
-                            else {
-                                me.FinishSubject(currentBlock);
+                            me.FinishSubject(currentBlock);
+                            if(!err && subject_doc){
                                 session_doc.subject = subject_doc.id;
-                                session_doc.save();
+                                session_doc.save();                            
+                            }
+                            else if(err){
+                                console.log(err);
                             }
                         });
                     });
                 }
                 else {
                     me.FinishSubject(currentBlock);
-                    console.log(err);
+                    
+                    if(err) {
+                        console.log(err);
+                    }
                 }
             });
         });
@@ -381,6 +383,7 @@ SessionsProvider.prototype.StateMachine = function(line, currentBlock) {
     switch(this.currentState) {
         // We start here
         case States.INITIAL:
+            console.log("*** INITIAL STATE ***")
             switch(lineType) {
                 case States.HAVE_SESSION:
                     this.currentState = States.HAVE_SESSION;
