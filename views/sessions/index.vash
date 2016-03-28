@@ -15,15 +15,15 @@
             <ul class="pager">
                 <li class="previous">
                     @{ var prev = "/sessions/" + model.date.add(-1).days().toString('d/M/yyyy'); }
-                    <a href=@prev> &larr; Dia anterior</a>
+                    <a href="@prev"> &larr; Dia anterior</a>
                 </li>
                 <li class="next">
                     @{ var next = "/sessions/" + model.date.add(2).days().toString('d/M/yyyy'); }
-                    <a href=@next> Dia següent &rarr;</a>
+                    <a href="@next"> Dia següent &rarr;</a>
                 </li>
             </ul>
             @if(model.sessions && model.sessions.length > 0) {
-                <p>Hola @(model.user.username), aquestes son les classes que tens per aquest dia
+                <p>Hola @(model.user.username), aquestes son les classes que tens per aquest dia</p>
                 <table class="table table-hover">
                     <thead>
                     <tr>

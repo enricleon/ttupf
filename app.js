@@ -47,6 +47,7 @@
             if (1 !== mongoose.connection.readyState) {
 
                 // Reconnect if we can
+
                 mongoose.connect(config.dbUri, config.dbOptions);
                 res.status(503);
                 throw new Error('Mongo not available. Reconnecting...');
@@ -130,6 +131,7 @@
     passport.deserializeUser(User.deserializeUser());
 
     // Connect mongoose
+    console.log(config.dbUri, config.dbOptions);
     mongoose.connect(config.dbUri, config.dbOptions);
 
     // Setup routes
