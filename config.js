@@ -15,7 +15,7 @@ var async = require('async');
 
 var Config = module.exports = function() {
     this.production = true;
-    this.dbUri = this.production ? 'mongodb://ttupf_mongolab:L_1i2o9n2@ds027748.mongolab.com:27748/ttupf_mongolab' : 'localhost:27017/ttupf';
+    this.dbUri = this.production ? 'mongodb://ttupf_dev:JQvscrtZrY4SxgV166QP@ds028679.mlab.com:28679/ttupf' : 'localhost:27017/ttupf';
     this.dbOptions = {
         server:{
             auto_reconnect: true,
